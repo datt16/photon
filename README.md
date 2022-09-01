@@ -1,4 +1,4 @@
-# Peoject Photon
+# Project Photon
 
 Babylon.jsで軽量かつ操作が容易な3Dエディタを作ろうとしているプロジェクトです。
 名前は変わるかも
