@@ -9,6 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "babylonjs": "^5.22.0",
+    "babylonjs-gui": "^5.22.0",
+    "babylonjs-loaders": "^5.22.0",
+    "babylonjs-materials": "^5.22.0",
+    "babylonjs-post-process": "^5.22.0",
+    "babylonjs-procedural-textures": "^5.22.0",
+    "babylonjs-serializers": "^5.22.0",
     "next": "12.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"

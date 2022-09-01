@@ -342,6 +342,60 @@ axobject-query@^2.2.0:
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-2.2.0.tgz#943d47e10c0b704aa42275e20edf3722648989be"
   integrity sha512-Td525n+iPOOyUQIeBfcASuG6uJsDOITl7Mds5gFyerkWiX7qhUTdYUBlSgNMyVqtSJqwpt1kXGLdUt6SykLMRA==
 
+babylonjs-gltf2interface@^5.22.0:
+  version "5.22.0"
+  resolved "https://registry.yarnpkg.com/babylonjs-gltf2interface/-/babylonjs-gltf2interface-5.22.0.tgz#e3aecce6fa76b3d3e2fd09f7a93caa9802444339"
+  integrity sha512-i9J7agTHivCekLElAOcWLnzscJrE3AswYJ4b75q8fYHhN1MOL3tuGouIbg1E+zK4urWap/cZnJoYM9blNUOxXA==
+
+babylonjs-gui@^5.22.0:
+  version "5.22.0"
+  resolved "https://registry.yarnpkg.com/babylonjs-gui/-/babylonjs-gui-5.22.0.tgz#4bc905010f86dc6621712e89dc5191e18c94c83e"
+  integrity sha512-I5L1dCrEU2X0I8+l15j2qNeKP7c+an4wi1m32OMXn7qLQF4KHwd9F20lr3ywqdFMVIhs2LbEQb7EyyTc4fLiJA==
+  dependencies:
+    babylonjs "^5.22.0"
+
+babylonjs-loaders@^5.22.0:
+  version "5.22.0"
+  resolved "https://registry.yarnpkg.com/babylonjs-loaders/-/babylonjs-loaders-5.22.0.tgz#c130b7c0c51fd69086fc7e70e17aa57e9f569e91"
+  integrity sha512-viUD2M30uSe7F7p5s0T2yN317iGA8khem5I8Hsq3JzGywFNRfsm90Y1QYmiF/GZXB2ChUDXYohbjJuGjSc+K2w==
+  dependencies:
+    babylonjs "^5.22.0"
+    babylonjs-gltf2interface "^5.22.0"
+
+babylonjs-materials@^5.22.0:
+  version "5.22.0"
+  resolved "https://registry.yarnpkg.com/babylonjs-materials/-/babylonjs-materials-5.22.0.tgz#7ea264986b8d317f65f788d5896a64386cfb148d"
+  integrity sha512-yvYeSlOOgxhs1um7N+QsHF5O2sHnqTosGV2H7xGX1/X8gQHAJrcqC5FoGxzglabJQaZYzNGqfVA8xZc3+rh22w==
+  dependencies:
+    babylonjs "^5.22.0"
+
+babylonjs-post-process@^5.22.0:
+  version "5.22.0"
+  resolved "https://registry.yarnpkg.com/babylonjs-post-process/-/babylonjs-post-process-5.22.0.tgz#e1e9925cc7f7cb8981276283f7976d348ba695b0"
+  integrity sha512-UTFFxYyRc8WH82VemT4aOypmTqHgHlwWWGDXVz5ihvaA23EMwlBLrubd4V9yG7ABklDOFWUCuld9uTvKWpIFZQ==
+  dependencies:
+    babylonjs "^5.22.0"
+
+babylonjs-procedural-textures@^5.22.0:
+  version "5.22.0"
+  resolved "https://registry.yarnpkg.com/babylonjs-procedural-textures/-/babylonjs-procedural-textures-5.22.0.tgz#b33e5ed735ae9224dabe41ea71112cfd3e77ce53"
+  integrity sha512-qCO4jWxVl6Y0fqHLQIax+A8XiBsRu34erMVFCJx0nbfW46ydg4o6yY53Gs/RC/KEUXLy3h112D+bTibS3xp4vg==
+  dependencies:
+    babylonjs "^5.22.0"
+
+babylonjs-serializers@^5.22.0:
+  version "5.22.0"
+  resolved "https://registry.yarnpkg.com/babylonjs-serializers/-/babylonjs-serializers-5.22.0.tgz#486d2cbfb1d370d89ba352fe53a8a500b6414dbf"
+  integrity sha512-cQU6BtZaQ4qeo7JXK0z/RfLL+QZoKQvY1kM14/l6cznfNySDUCV4+I0be2DTnqAG+jmYQYOt7AaGsaIHqaNAiQ==
+  dependencies:
+    babylonjs "^5.22.0"
+    babylonjs-gltf2interface "^5.22.0"
+
+babylonjs@^5.22.0:
+  version "5.22.0"
+  resolved "https://registry.yarnpkg.com/babylonjs/-/babylonjs-5.22.0.tgz#3de5436e013e914190ca0cc60dc9c4ea30a5d1d1"
+  integrity sha512-bZPW093oA3gjNhcR1t7J1xvruXdpT70DWJBx4FEeovSTdUICPGBnM6hNI6leuukUDEcCE9Rpw/yav60V1tx6gQ==
+
 balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
