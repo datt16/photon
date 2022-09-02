@@ -18,3 +18,7 @@ Babylon.jsで軽量かつ操作が容易な3Dエディタを作ろうとして�
     "babylonjs-serializers": "^5.22.0",
 "typescript": "4.8.2"
 ```
+
+## メモ
+
+ChakuraUIの方がパフォーマンス良いかもしれん
