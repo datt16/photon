@@ -1,5 +1,5 @@
 import { Engine, EngineOptions, Scene, SceneOptions } from "babylonjs"
-import React, { useEffect, useRef, useState } from "react"
+import React, { Ref, useEffect, useRef, useState } from "react"
 
 export interface IFakeSceneProps {
   antialias?: boolean
@@ -7,7 +7,7 @@ export interface IFakeSceneProps {
   adaptToDeviceRatio?: boolean
   sceneOptions?: SceneOptions
   onRender: (scene: Scene) => void
-  onSceneReady: (scene: Scene) => void
+  onSceneReady: (scene: Scene, canvasRef: Ref<HTMLCanvasElement>) => void
 }
 
 const DefaultFakeScenePropValue: IFakeSceneProps = {
@@ -62,9 +62,11 @@ const FakeScene: React.FC<IFakeSceneProps> = ({
       const scene = new Scene(engine, sceneOptions)
       setScene(scene)
       if (scene.isReady()) {
-        onSceneReady(scene)
+        onSceneReady(scene, reactCanvas)
       } else {
-        scene.onReadyObservable.addOnce((scene) => onSceneReady(scene))
+        scene.onReadyObservable.addOnce((scene) =>
+          onSceneReady(scene, reactCanvas)
+        )
       }
 
       engine.runRenderLoop(() => {
