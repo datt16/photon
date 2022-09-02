@@ -10,7 +10,6 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@nextui-org/react": "^1.0.0-beta.10",
     "babylonjs": "^5.22.0",
     "babylonjs-gui": "^5.22.0",
     "babylonjs-loaders": "^5.22.0",
