@@ -1,4 +1,11 @@
-import { Engine, EngineOptions, Scene, SceneOptions } from "babylonjs"
+import {
+  ArcRotateCamera,
+  Engine,
+  EngineOptions,
+  Scene,
+  SceneOptions,
+  Vector3,
+} from "babylonjs"
 import React, { Ref, useEffect, useRef, useState } from "react"
 
 export interface IFakeSceneProps {
@@ -7,7 +14,7 @@ export interface IFakeSceneProps {
   adaptToDeviceRatio?: boolean
   sceneOptions?: SceneOptions
   onRender: (scene: Scene) => void
-  onSceneReady: (scene: Scene, canvasRef: Ref<HTMLCanvasElement>) => void
+  onSceneReady: (scene: Scene) => void
 }
 
 const FakeScene: React.FC<IFakeSceneProps> = ({
@@ -17,63 +24,53 @@ const FakeScene: React.FC<IFakeSceneProps> = ({
   sceneOptions,
   onRender,
   onSceneReady,
+  ...rest
 }) => {
   const reactCanvas = useRef(null)
 
-  const [loaded, setLoaded] = useState(false)
-  const [scene, setScene] = useState<Scene | null>(null)
-
   useEffect(() => {
-    if (window) {
-      const resize = () => {
-        scene?.getEngine().resize()
-      }
-      window.addEventListener("resize", resize)
+    const { current: canvas } = reactCanvas
 
-      return () => {
-        window.removeEventListener("resize", resize)
-      }
+    const engine = new Engine(
+      canvas,
+      antialias,
+      engineOptions,
+      adaptToDeviceRatio
+    )
+    const scene = new Scene(engine, sceneOptions)
+    if (scene.isReady()) {
+      onSceneReady(scene)
+    } else {
+      scene.onReadyObservable.addOnce((scene) => onSceneReady(scene))
     }
-  }, [scene])
 
-  useEffect(() => {
-    if (!loaded) {
-      setLoaded(true)
-      const engine = new Engine(
-        reactCanvas.current,
-        antialias,
-        engineOptions,
-        adaptToDeviceRatio
-      )
-      const scene = new Scene(engine, sceneOptions)
-      setScene(scene)
-      if (scene.isReady()) {
-        onSceneReady(scene, reactCanvas)
-      } else {
-        scene.onReadyObservable.addOnce((scene) =>
-          onSceneReady(scene, reactCanvas)
-        )
-      }
+    engine.runRenderLoop(() => {
+      if (typeof onRender === "function") onRender(scene)
+      scene.render()
+    })
 
-      engine.runRenderLoop(() => {
-        if (typeof onRender === "function") {
-          onRender(scene)
-        }
-        scene.render()
-      })
+    const resize = () => {
+      scene.getEngine().resize()
+    }
+
+    if (window) {
+      window.addEventListener("resize", resize)
     }
 
     return () => {
-      if (scene !== null) {
-        scene.dispose()
+      scene.getEngine().dispose()
+
+      if (window) {
+        window.removeEventListener("resize", resize)
       }
     }
   }, [reactCanvas])
-
   return (
-    <div>
-      <canvas style={{ width: "100%", height: "100%" }} ref={reactCanvas} />
-    </div>
+    <canvas
+      style={{ width: "100%", height: "100%" }}
+      ref={reactCanvas}
+      {...rest}
+    />
   )
 }
 
