@@ -2,14 +2,19 @@ import { Button, Flex, Switch } from "@chakra-ui/react"
 import {
   ArcRotateCamera,
   BoxParticleEmitter,
+  Color3,
   DirectionalLight,
+  HemisphericLight,
   Mesh,
   MeshBuilder,
+  PointerEventTypes,
   PointLight,
   Scene,
+  StandardMaterial,
   Vector3,
 } from "babylonjs"
 import { AbstractMesh } from "babylonjs/Meshes/index"
+import { it } from "node:test"
 import React, { Ref, useState } from "react"
 import FakeScene from "./FakeScene"
 
@@ -18,27 +23,72 @@ const UserScene = () => {
   const [selectedOption, setSelectedOption] = useState<any>()
   const [scene, setScene] = useState<Scene>()
 
-  const onSceneReady = (scene: Scene, canvas: Ref<HTMLCanvasElement>) => {
+  const onSceneReady = (scene: Scene) => {
     setScene(scene)
-    const camera = new ArcRotateCamera(
+
+    new ArcRotateCamera(
       "camera",
       -Math.PI / 2,
       Math.PI / 2.5,
       10,
       new Vector3(0, 0, 0),
       scene
-    )
+    ).attachControl(true)
 
-    MeshBuilder.CreateBox("fake-box", {
+    const box = MeshBuilder.CreateBox("fake-box", {
       size: 1,
     })
+    box.position = new Vector3(1, 0, 0)
 
-    new DirectionalLight("PointLight", new Vector3(0, -1, 0), scene)
-    camera.attachControl(canvas, true)
+    const box1 = MeshBuilder.CreateBox("fake-box-2", {
+      size: 1,
+    })
+    box1.position = new Vector3(-1, 0, 0)
+    new HemisphericLight("Light", new Vector3(0, 1, 0), scene)
+
+    scene.onPointerObservable.add((info) => {
+      switch (info.type) {
+        case PointerEventTypes.POINTERDOWN:
+          console.log("DOWN", getPickedMesh(scene))
+          break
+        case PointerEventTypes.POINTERUP:
+          console.log("UP", getPickedMesh(scene))
+          break
+        // case PointerEventTypes.POINTERMOVE:
+        //   console.log("MOVE", getPickedMesh(scene))
+        //   break
+        case PointerEventTypes.POINTERWHEEL:
+          console.log("WHEEL", getPickedMesh(scene))
+          break
+        case PointerEventTypes.POINTERPICK:
+          toggleBoundingBox(scene, getPickedMesh(scene))
+          break
+        case PointerEventTypes.POINTERTAP:
+          console.log("TAP", getPickedMesh(scene))
+          break
+        case PointerEventTypes.POINTERDOUBLETAP:
+          console.log("W-TAP", getPickedMesh(scene))
+          break
+      }
+    })
+  }
+
+  const getPickedMesh = (scene: Scene) => {
+    const picked = scene.pick(scene.pointerX, scene.pointerY)?.pickedMesh
+    return picked ? picked.uniqueId : null
+  }
+
+  const toggleBoundingBox = (scene: Scene, meshUniqueId: number | null) => {
+    if (meshUniqueId) {
+      const ref = scene.getMeshByUniqueId(meshUniqueId)
+      if (ref) {
+        ref.showBoundingBox = ref.showBoundingBox ? false : true
+      }
+    }
   }
 
   const onRender = (scene: Scene) => {
-    // console.log(scene.pointerX)
+    // 毎フレーム実行される処理
   }
 
   /**
@@ -131,7 +181,7 @@ const UserScene = () => {
           output materials
         </Button>
       </Flex>
-      <FakeScene onRender={onRender} onSceneReady={onSceneReady} />
+      <FakeScene antialias onRender={onRender} onSceneReady={onSceneReady} />
     </div>
   )
 }
