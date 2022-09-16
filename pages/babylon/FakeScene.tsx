@@ -10,20 +10,6 @@ export interface IFakeSceneProps {
   onSceneReady: (scene: Scene, canvasRef: Ref<HTMLCanvasElement>) => void
 }
 
-const DefaultFakeScenePropValue: IFakeSceneProps = {
-  antialias: false,
-  engineOptions: {},
-  adaptToDeviceRatio: false,
-  sceneOptions: {},
-  onRender: (scene: Scene) => {
-    return scene
-  },
-  onSceneReady: (scene: Scene) => {
-    console.log("Hello")
-    return scene
-  },
-}
-
 const FakeScene: React.FC<IFakeSceneProps> = ({
   antialias,
   engineOptions,
