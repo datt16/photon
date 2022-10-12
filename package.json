@@ -10,6 +10,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@babylonjs/gui": "^5.27.1",
     "@chakra-ui/react": "^2.3.1",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -23,6 +24,7 @@
     "framer-motion": "^6",
     "next": "12.2.5",
     "react": "18.2.0",
+    "react-babylonjs": "^3.1.11",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
