@@ -13,10 +13,9 @@ import {
   StandardMaterial,
   Vector3,
 } from "babylonjs"
-import { AbstractMesh } from "babylonjs/Meshes/index"
-import { it } from "node:test"
 import React, { Ref, useState } from "react"
 import FakeScene from "./FakeScene"
+
 
 const UserScene = () => {
   const [SelectedItem, setSelectedItem] = useState<Mesh | null>(null)
