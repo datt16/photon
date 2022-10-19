@@ -1,7 +1,8 @@
-import { Engine, Scene, useBeforeRender, useClick, useHover } from "react-babylonjs"
+import { Engine, GizmoManager, Ground, Plane, Scene, SceneEventArgs, useBeforeRender, useClick, useHover } from "react-babylonjs"
 import React, { Ref, useRef, useState } from "react"
 import { Nullable } from "babylonjs"
-import { Mesh, Vector3, Color3 } from "@babylonjs/core"
+import { Mesh, Vector3, Color3, Scene as BabylonScene, AbstractMesh, BoundingBoxGizmo, UtilityLayerRenderer, Observable } from "@babylonjs/core"
+import { GridMaterial } from "babylonjs-materials"
 
 interface SpinningBoxProps {
   name: string,
@@ -12,6 +13,13 @@ interface SpinningBoxProps {
 
 const DefaultScale = new Vector3(1, 1, 1)
 const BiggerScale = new Vector3(1.25, 1.25, 1.25)
+
+const onSceneMount = (props: SceneEventArgs) => {
+  const scene = props.scene
+  const leftBox = props.scene.getMeshByName('left')
+  console.log(scene.meshes)
+  console.log(scene.cameras)
+}
 
 const SpinningBox = (props: SpinningBoxProps) => {
   const boxRef = useRef<Nullable<Mesh>>(null)
@@ -29,7 +37,7 @@ const SpinningBox = (props: SpinningBoxProps) => {
   useBeforeRender((scene) => {
     if (boxRef.current) {
       var deltaTimeInMillis = scene.getEngine().getDeltaTime()
-      boxRef.current.rotation.y += (rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000)
+      boxRef.current.rotation.y += (rpm / 60) * Math.PI * 10 * (deltaTimeInMillis / 1000)
     }
   })
 
@@ -50,11 +58,11 @@ const SpinningBox = (props: SpinningBoxProps) => {
   )
 }
 
-
-const ReactBabylonScenePage = () => (
+const ReactBabylonScenePage = () => {
+  return(
   <div>
     <Engine antialias adaptToDeviceRatio canvasId="babylonJS">
-      <Scene>
+      <Scene onSceneMount={onSceneMount}>
         <arcRotateCamera
           name="camera1"
           target={Vector3.Zero()}
@@ -84,5 +92,7 @@ const ReactBabylonScenePage = () => (
     </Engine>
   </div>
 )
+
+}
 
 export default ReactBabylonScenePage
