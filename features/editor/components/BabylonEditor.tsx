@@ -1,5 +1,5 @@
 import BabylonScene from "../../../components/babylon/BabylonScene"
-import { onEditorRendered, onEditorReady } from "../logic/BabylonEditorCommonLogic"
+import { onEditorRendered, onEditorReady } from "../logic/Common"
 
 const BabylonEditor = () => {
     return (
