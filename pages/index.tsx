@@ -14,12 +14,8 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <Link href="/babylon/ReactBabylon" as="react-babylonjs">
-          開発用ページ(react-babylon)
-        </Link>
-        <Link href="/babylon/UserScene" as="user-scene">
-          開発用ページ(UserScene)
-        </Link>
+        <Link href="/babylon/ReactBabylon">開発用ページ(react-babylon)</Link>
+        <Link href="/editor/EditorPage">開発用ページ(editor)</Link>
 
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
