@@ -1,6 +1,5 @@
-import {Color3, MeshBuilder, Scene, Vector3} from "babylonjs";
-import "../util"
-import {range} from "../util";
+import {Color3, MeshBuilder, Scene, Vector3} from "babylonjs"
+import {range} from "../util"
 
 const drawAxisLines = (scene: Scene) => {
     const xLinePoints = [Vector3.Zero(), new Vector3(200, 0, 0)]
@@ -14,11 +13,23 @@ const drawAxisLines = (scene: Scene) => {
     axisZ.color = new Color3(0, 0, 1)
 }
 
-const drawGrid = (scene: Scene, limit: number = 100, distance: number = 1) => {
+const drawGrid = (
+    scene: Scene,
+    limit: number = 100,
+    distance: number = 1,
+    isVisible: boolean = true
+) => {
+    if (!isVisible) return
+
     const linePointsBase = range(0, limit * 2, distance)
     const gridColor = new Color3(0.5, 0.5, 0.5)
 
-    const axisX = MeshBuilder.CreateLines("Grid-X", {points: [new Vector3(0, 0, -1 * limit), new Vector3(0, 0, limit)], updatable: false}, scene)
+    //TODO: ラインを一つにまとめる
+
+    const axisX = MeshBuilder.CreateLines("Grid-X", {
+        points: [new Vector3(0, 0, -1 * limit), new Vector3(0, 0, limit)],
+        updatable: false
+    }, scene)
     axisX.position = new Vector3(-100, 0, 0)
     axisX.color = gridColor
     linePointsBase.forEach((p, index) => {
@@ -27,7 +38,10 @@ const drawGrid = (scene: Scene, limit: number = 100, distance: number = 1) => {
     })
     axisX.dispose()
 
-    const axisZ = MeshBuilder.CreateLines("Grid-Z", {points: [new Vector3(-1 * limit, 0, 0), new Vector3(limit, 0, 0)], updatable: false}, scene)
+    const axisZ = MeshBuilder.CreateLines("Grid-Z", {
+        points: [new Vector3(-1 * limit, 0, 0), new Vector3(limit, 0, 0)],
+        updatable: false
+    }, scene)
     axisZ.position = new Vector3(0, 0, -1 * limit)
     axisZ.color = gridColor
     linePointsBase.forEach((p, index) => {

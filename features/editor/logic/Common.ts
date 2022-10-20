@@ -1,5 +1,5 @@
-import {ArcRotateCamera, Color3, HemisphericLight, MeshBuilder, Scene, Vector3} from "babylonjs"
-import {drawAxisLines, drawGrid} from "./Gizmo"
+import { ArcRotateCamera, Color3, HemisphericLight, MeshBuilder, Scene, Vector3 } from "babylonjs"
+import { drawAxisLines, drawGrid } from "./Gizmo"
 
 /**
  * @param scene: Babylonjs
@@ -44,4 +44,4 @@ const onEditorReady = (scene: Scene) => {
 const onEditorRendered = (scene: Scene) => {
 }
 
-export {onEditorReady, onEditorRendered}
+export { onEditorReady, onEditorRendered }
