@@ -14,7 +14,6 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <Link href="/babylon/ReactBabylon">開発用ページ(react-babylon)</Link>
         <Link href="/editor/EditorPage">開発用ページ(editor)</Link>
 
         <h1 className={styles.title}>

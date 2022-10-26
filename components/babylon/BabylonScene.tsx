@@ -1,6 +1,7 @@
 import { EngineOptions, SceneOptions } from '@babylonjs/core'
 import { Engine, Scene } from 'babylonjs'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import Div100vh from 'react-div-100vh'
 
 export interface PropTypes {
     antialias?: boolean
@@ -64,10 +65,21 @@ const BabylonScene = (props: PropTypes) => {
     }, [reactCanvas])
 
     return (
-        <canvas
-            ref={reactCanvas}
-            style={{ width: '100%', height: '100%', outline: 'none' }}
-        />
+        <Div100vh 
+        style={{
+            overflow: 'hidden'
+        }}>
+            <canvas
+                ref={reactCanvas}
+                style={
+                    {
+                        width: '100%',
+                        height: '100%',
+                        outline: 'none',
+                    }
+                }
+            />
+        </Div100vh>
     )
 }
 
