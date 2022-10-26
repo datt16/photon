@@ -12,7 +12,7 @@ export interface PropTypes {
     onSceneReady: (scene: Scene) => void
 }
 
-const BabylonScene = (props: PropTypes) => {
+const BabylonSceneProvider = (props: PropTypes) => {
 
     const {
         antialias,
@@ -65,10 +65,10 @@ const BabylonScene = (props: PropTypes) => {
     }, [reactCanvas])
 
     return (
-        <Div100vh 
-        style={{
-            overflow: 'hidden'
-        }}>
+        <Div100vh
+            style={{
+                overflow: 'hidden'
+            }}>
             <canvas
                 ref={reactCanvas}
                 style={
@@ -83,4 +83,4 @@ const BabylonScene = (props: PropTypes) => {
     )
 }
 
-export default BabylonScene
+export default BabylonSceneProvider
