@@ -3,14 +3,14 @@ import { Button, VStack, Text, Divider } from "@chakra-ui/react"
 import { Engine, Scene, Vector3 } from "babylonjs"
 import React, { createContext, useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
+import { useRecoilState } from "recoil"
 import {
   addCapsule,
   addCube,
   addGround,
 } from "../../features/editor/logic/CreateMesh"
-import AddButtonWithControl, {
-  position,
-} from "../elements/button/AddButtonWithPosition"
+import { positionState } from "../../globalStates/atoms/positionState"
+import AddButtonWithControl from "../elements/button/AddButtonWithPosition"
 
 export interface PropTypes {
   antialias?: boolean
@@ -32,7 +32,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
   } = props
 
   const [scene, setScene] = useState<Scene>()
-  const [position, setPosition] = useState<position>({ x: 0, y: 0, z: 0 })
+  const [position, setPosition] = useRecoilState(positionState)
   const reactCanvas = useRef(null)
 
   // あとで適当にモジュール化

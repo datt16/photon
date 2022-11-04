@@ -8,17 +8,11 @@ import {
 } from "@chakra-ui/react"
 import { Vector3 } from "babylonjs"
 
-export interface position {
-  x: number
-  y: number
-  z: number
-}
-
 const AddButtonWithControl = (
   label: string,
-  state: position,
-  setValue: (newValue: position) => void,
-  onButtonClicked = (position: Vector3) => {}
+  state: Vector3,
+  setValue: (newValue: Vector3) => void,
+  onButtonClicked = (position: Vector3) => { }
 ) => {
   const { x, y, z } = state
 
@@ -35,7 +29,7 @@ const AddButtonWithControl = (
               color={"white"}
               value={x}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ x: Number(e.target.value), y, z })
+                setValue(new Vector3(Number(e.target.value), y, z))
               }
             />
           </InputGroup>
@@ -45,7 +39,7 @@ const AddButtonWithControl = (
               value={y}
               color={"white"}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ x, y: Number(e.target.value), z })
+                setValue(new Vector3(x, Number(e.target.value), z))
               }
             />
           </InputGroup>
@@ -55,7 +49,7 @@ const AddButtonWithControl = (
               color={"white"}
               value={z}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ x, y, z: Number(e.target.value) })
+                setValue(new Vector3(x, y, Number(e.target.value)))
               }
             />
           </InputGroup>
