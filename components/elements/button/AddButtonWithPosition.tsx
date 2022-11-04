@@ -1,5 +1,3 @@
-import { Vector3 } from "babylonjs"
-import {} from "react"
 import {
   Button,
   HStack,
@@ -8,6 +6,7 @@ import {
   InputAddon,
   ButtonGroup,
 } from "@chakra-ui/react"
+import { Vector3 } from "babylonjs"
 
 export interface position {
   x: number
