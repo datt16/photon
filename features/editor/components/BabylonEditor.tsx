@@ -2,6 +2,7 @@ import BabylonSceneProvider from "../../../components/babylon/BabylonSceneProvid
 import { onEditorRendered, onEditorReady } from "../logic/Common"
 
 const BabylonEditor = () => {
+
     return (
         <BabylonSceneProvider
             antialias
