@@ -20,8 +20,8 @@ const onEditorReady = (scene: Scene) => {
 
     // 環境光
     const light0 = new HemisphericLight("Hemi0", new Vector3(0, 1, 0), scene)
-    light0.diffuse = new Color3(1, 0, 0) // 空用
-    light0.specular = new Color3(0, 1, 0) // 地面用
+    light0.diffuse = new Color3(1, 1, 1) // 空用
+    light0.specular = new Color3(0, 0, 0) // 地面用
     light0.groundColor = new Color3(0, 0, 0) // 鏡面反射用
 
     MeshBuilder
