@@ -1,3 +1,4 @@
+import { Vector3 } from "@babylonjs/core"
 import {
   Button,
   HStack,
@@ -6,7 +7,6 @@ import {
   InputAddon,
   ButtonGroup,
 } from "@chakra-ui/react"
-import { Vector3 } from "@babylonjs/core"
 
 const AddButtonWithControl = (
   label: string,
