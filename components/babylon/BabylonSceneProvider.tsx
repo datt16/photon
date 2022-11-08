@@ -5,7 +5,6 @@ import {
   Scene,
   Vector3,
 } from "@babylonjs/core"
-import { Button, VStack, Text, Divider } from "@chakra-ui/react"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
@@ -16,7 +15,9 @@ import {
   addGround,
 } from "../../features/editor/logic/CreateMesh"
 import { positionState } from "../../globalStates/atoms/positionState"
-import AddButtonWithControl from "../elements/button/AddButtonWithPosition"
+import SceneControlPanel, {
+  PanelButtonType,
+} from "../elements/panel/SceneControlPanel"
 
 export interface PropTypes {
   antialias?: boolean
@@ -40,56 +41,6 @@ const BabylonSceneProvider = (props: PropTypes) => {
   const [scene, setScene] = useState<Scene>()
   const [position, setPosition] = useRecoilState(positionState)
   const reactCanvas = useRef(null)
-
-  // あとで適当にモジュール化
-  const SceneControlPanel = (scene: Scene | undefined) => {
-    return scene ? (
-      <VStack
-        mt={"1rem"}
-        ml={"1rem"}
-        alignItems={"start"}
-        p="6px"
-        display="flex"
-        borderRadius="lg"
-        border={"1px solid"}
-        borderColor={"whiteAlpha.400"}
-        position="fixed"
-        zIndex={100}
-      >
-        <Text fontSize={"xs"} color={"whiteAlpha.900"}>
-          開発用
-        </Text>
-        <Button size="xs" onClick={() => onClickUid()}>
-          SHOW UID
-        </Button>
-        <Divider />
-        <Text fontSize={"xs"} color={"whiteAlpha.900"}>
-          [Dev]CREATE
-        </Text>
-        <Button size="xs" onClick={() => addCube(scene, new Vector3(0, 3, 0))}>
-          CUBE
-        </Button>
-        <Button
-          size="xs"
-          onClick={() => addCapsule(scene, new Vector3(3, 0, 0))}
-        >
-          CAPSULE
-        </Button>
-        <Button
-          size="xs"
-          onClick={() => addGround(scene, new Vector3(0, 0, 0), 10, 10)}
-        >
-          Ground
-        </Button>
-        {AddButtonWithControl("CUBE", position, setPosition, (pos) => {
-          addCube(scene, pos)
-          console.log(position)
-        })}
-      </VStack>
-    ) : (
-      <></>
-    )
-  }
 
   useEffect(() => {
     const { current: canvas } = reactCanvas
@@ -149,7 +100,46 @@ const BabylonSceneProvider = (props: PropTypes) => {
         overflow: "hidden",
       }}
     >
-      {SceneControlPanel(scene)}
+      {SceneControlPanel({
+        data: [
+          {
+            buttonType: PanelButtonType.section,
+            label: "開発用",
+          },
+          {
+            buttonType: PanelButtonType.default,
+            label: "show UID",
+            onButtonClicked: () => onClickUid,
+          },
+          {
+            buttonType: PanelButtonType.section,
+            label: "開発用 - 作成",
+          },
+          {
+            buttonType: PanelButtonType.default,
+            label: "CUBE",
+            onButtonClicked: () => addCube(scene),
+          },
+          {
+            buttonType: PanelButtonType.default,
+            label: "CAPSULE",
+            onButtonClicked: () => addCapsule(scene),
+          },
+          {
+            buttonType: PanelButtonType.default,
+            label: "GROUND",
+            onButtonClicked: () => addGround(scene),
+          },
+          {
+            buttonType: PanelButtonType.vector3,
+            label: "CUBE2",
+            state: position,
+            // as使わない方法あれば考える
+            onButtonClicked: (pos) => addCube(scene, pos as Vector3),
+            onStateChanged: setPosition,
+          },
+        ],
+      })}
       <canvas
         ref={reactCanvas}
         style={{
