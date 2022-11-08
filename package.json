@@ -12,6 +12,9 @@
   "dependencies": {
     "@babylonjs/core": "^5.27.1",
     "@babylonjs/gui": "^5.27.1",
+    "@chakra-ui/react": "^2.3.7",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "babylonjs": "^5.22.0",
     "babylonjs-gui": "^5.22.0",
     "babylonjs-loaders": "^5.22.0",
@@ -19,11 +22,12 @@
     "babylonjs-post-process": "^5.22.0",
     "babylonjs-procedural-textures": "^5.22.0",
     "babylonjs-serializers": "^5.22.0",
+    "framer-motion": "^6",
     "next": "12.2.5",
     "react": "18.2.0",
-    "react-babylonjs": "^3.1.11",
     "react-div-100vh": "^0.7.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "recoil": "^0.7.6"
   },
   "devDependencies": {
     "@types/node": "18.7.14",
