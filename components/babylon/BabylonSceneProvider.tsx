@@ -1,9 +1,15 @@
-import { EngineOptions, SceneOptions } from "@babylonjs/core"
+import {
+  EngineOptions,
+  SceneOptions,
+  Engine,
+  Scene,
+  Vector3,
+} from "@babylonjs/core"
 import { Button, VStack, Text, Divider } from "@chakra-ui/react"
-import { Engine, Scene, Vector3 } from "babylonjs"
-import React, { createContext, useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
+
 import {
   addCapsule,
   addCube,

@@ -6,13 +6,13 @@ import {
   InputAddon,
   ButtonGroup,
 } from "@chakra-ui/react"
-import { Vector3 } from "babylonjs"
+import { Vector3 } from "@babylonjs/core"
 
 const AddButtonWithControl = (
   label: string,
   state: Vector3,
   setValue: (newValue: Vector3) => void,
-  onButtonClicked = (position: Vector3) => { }
+  onButtonClicked = (position: Vector3) => {}
 ) => {
   const { x, y, z } = state
 
