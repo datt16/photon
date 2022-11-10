@@ -4,10 +4,13 @@ import {
   Engine,
   Scene,
   Vector3,
+  SceneLoader,
 } from "@babylonjs/core"
+import { Input } from "@chakra-ui/react"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
+import useFile from "../../features/editor/hooks/useFile"
 
 import {
   addCapsule,
@@ -41,6 +44,28 @@ const BabylonSceneProvider = (props: PropTypes) => {
   const [scene, setScene] = useState<Scene>()
   const [position, setPosition] = useRecoilState(positionState)
   const reactCanvas = useRef(null)
+
+  const { fileURL, handleFiles, fileName } = useFile()
+
+  useEffect(() => {
+    if (fileURL === undefined) return
+    if (scene) {
+      SceneLoader.Append(
+        "fileURL",
+        fileName,
+        scene,
+        () => {
+          alert("loaded")
+        },
+        () => {
+          console.log("now loading...")
+        },
+        () => {
+          alert("読み込めませんでした")
+        }
+      )
+    }
+  }, [fileURL])
 
   useEffect(() => {
     const { current: canvas } = reactCanvas
@@ -100,6 +125,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
         overflow: "hidden",
       }}
     >
+      <Input position={"fixed"} type={"file"} onChange={handleFiles} />
       {SceneControlPanel({
         data: [
           {
