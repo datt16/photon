@@ -6,7 +6,7 @@ import {
   Vector3,
   SceneLoader,
 } from "@babylonjs/core"
-import { Input } from "@chakra-ui/react"
+import { Input } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
