@@ -1,4 +1,5 @@
 export default {}
+
 // export const config = {
 //     headers: { 'content-type': 'multipart/form-data' },
 //     onUploadProgress: (event) => {
