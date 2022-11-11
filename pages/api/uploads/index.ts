@@ -40,6 +40,7 @@ apiRoute.use(upload.single(UPLOAD_FILE_FORM_FIELD_NAME))
 apiRoute.post((_req, res) => {
   // TODO: 保存時にファイル名を一意に、成功時ファイル名とURLを返却するようにする
   res.status(200)
+  res.end()
 })
 
 export default apiRoute

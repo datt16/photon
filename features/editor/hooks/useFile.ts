@@ -1,8 +1,10 @@
 import axios, { AxiosRequestConfig } from "axios"
 import { ChangeEventHandler, useState } from "react"
+import { useRecoilState } from "recoil"
 import { UPLOAD_FILE_FORM_FIELD_NAME } from "../../../const/const"
+import { fileUploadState } from "../../../globalStates/atoms/fileUploadState"
 
-const useFile = () => {
+const useFile = (setIsUploading: (state: boolean) => void) => {
   const [fileURL, setFileURL] = useState<string>()
   const [fileName, setFileName] = useState<string>()
 
@@ -22,14 +24,18 @@ const useFile = () => {
     }
     const formData: FormData = new FormData()
     Array.from(event.target.files).forEach((file, index) => {
-      setFileName(file.name)
       formData.append(UPLOAD_FILE_FORM_FIELD_NAME, file)
     })
 
-    const response = await axios.post("/api/uploads", formData, config)
-    if (response.status == 200) {
-      setFileURL(`/public/uploads/${fileName}`)
-    }
+    const url = `/uploads/${event.target.files[0].name}`
+    setFileURL(url)
+
+    setIsUploading(true)
+    await axios.post("/api/uploads", formData, config).then((response) => {
+      if (response.status == 200) {
+        setIsUploading(false)
+      }
+    })
   }
   return { handleFiles, fileURL, fileName }
 }

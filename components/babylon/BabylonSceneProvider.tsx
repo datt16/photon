@@ -6,7 +6,9 @@ import {
   Vector3,
   SceneLoader,
 } from "@babylonjs/core"
-import { Input } from '@chakra-ui/react'
+import '@babylonjs/loaders/glTF'
+import "@babylonjs/loaders/OBJ"
+import { Input } from "@chakra-ui/react"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
@@ -17,6 +19,7 @@ import {
   addCube,
   addGround,
 } from "../../features/editor/logic/CreateMesh"
+import { fileUploadState } from "../../globalStates/atoms/fileUploadState"
 import { positionState } from "../../globalStates/atoms/positionState"
 import SceneControlPanel, {
   PanelButtonType,
@@ -42,16 +45,19 @@ const BabylonSceneProvider = (props: PropTypes) => {
   } = props
 
   const [scene, setScene] = useState<Scene>()
-  const [position, setPosition] = useRecoilState(positionState)
+  // const [position, setPosition] = useRecoilState(positionState)
+  const [isUploading, setIsUploading] = useRecoilState(fileUploadState)
   const reactCanvas = useRef(null)
 
-  const { fileURL, handleFiles, fileName } = useFile()
+  const { fileURL, handleFiles, fileName } = useFile(setIsUploading)
 
   useEffect(() => {
+    console.log(fileName, fileURL, isUploading)
+    if (isUploading) return
     if (fileURL === undefined) return
     if (scene) {
       SceneLoader.Append(
-        "fileURL",
+        fileURL,
         fileName,
         scene,
         () => {
@@ -65,7 +71,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
         }
       )
     }
-  }, [fileURL])
+  }, [isUploading])
 
   useEffect(() => {
     const { current: canvas } = reactCanvas
@@ -125,7 +131,12 @@ const BabylonSceneProvider = (props: PropTypes) => {
         overflow: "hidden",
       }}
     >
-      <Input position={"fixed"} type={"file"} onChange={handleFiles} />
+      <Input
+        position={"fixed"}
+        type="file"
+        onChange={handleFiles}
+        name="FILE"
+      />
       {SceneControlPanel({
         data: [
           {
@@ -156,14 +167,14 @@ const BabylonSceneProvider = (props: PropTypes) => {
             label: "GROUND",
             onButtonClicked: () => addGround(scene),
           },
-          {
-            buttonType: PanelButtonType.vector3,
-            label: "CUBE2",
-            state: position,
-            // as使わない方法あれば考える
-            onButtonClicked: (pos) => addCube(scene, pos as Vector3),
-            onStateChanged: setPosition,
-          },
+          // {
+          //   buttonType: PanelButtonType.vector3,
+          //   label: "CUBE2",
+          //   state: position,
+          //   // as使わない方法あれば考える
+          //   onButtonClicked: (pos) => addCube(scene, pos as Vector3),
+          //   onStateChanged: setPosition,
+          // },
         ],
       })}
       <canvas

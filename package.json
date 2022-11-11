@@ -12,6 +12,7 @@
   "dependencies": {
     "@babylonjs/core": "^5.27.1",
     "@babylonjs/gui": "^5.27.1",
+    "@babylonjs/loaders": "^5.32.1",
     "@chakra-ui/react": "^2.3.7",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
