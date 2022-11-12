@@ -44,7 +44,7 @@ apiRoute.post(upload.single(UPLOAD_FILE_FORM_FIELD_NAME), (req, res) => {
   const fileData = req.file
   res.status(200).json({
     fileName: fileData?.filename,
-    folderPath: fileData?.destination,
+    folderPath: fileData?.destination.split("./public")[1] + "/",
   })
   res.end()
 })
