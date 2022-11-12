@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import multer from "multer"
 import nextConnect from "next-connect"
-import { readdirSync } from "fs"
 import {
   UPLOAD_FILE_FORM_FIELD_NAME,
   UPLODED_FILE_DESTINATION_PATH,
 } from "../../../const/const"
+import { createHash } from "crypto"
 
 // Multerのインスタンスを提供する
 // Multer: mulutipart/form-data形式でアップロードされたファイルを処理するミドルウェア
@@ -15,8 +15,13 @@ const upload = multer({
   },
   storage: multer.diskStorage({
     destination: UPLODED_FILE_DESTINATION_PATH,
-    // FIXME: 日本語のファイルアップロードすると文字化けする
-    filename: (_req, file, cb) => cb(null, file.originalname),
+    filename: (_req, file, cb) => {
+      const [fileName, fileType] = file.originalname.split(".")
+      cb(
+        null,
+        `${createHash("sha1").update(fileName).digest("hex")}.${fileType}`
+      )
+    },
   }),
 })
 
@@ -34,12 +39,13 @@ const apiRoute = nextConnect({
   },
 })
 
-apiRoute.use(upload.single(UPLOAD_FILE_FORM_FIELD_NAME))
-
 // ファイルPOST時
-apiRoute.post((_req, res) => {
-  // TODO: 保存時にファイル名を一意に、成功時ファイル名とURLを返却するようにする
-  res.status(200)
+apiRoute.post(upload.single(UPLOAD_FILE_FORM_FIELD_NAME), (req, res) => {
+  const fileData = req.file
+  res.status(200).json({
+    fileName: fileData?.filename,
+    folderPath: fileData?.destination,
+  })
   res.end()
 })
 
