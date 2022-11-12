@@ -6,12 +6,12 @@ import {
   Vector3,
   SceneLoader,
 } from "@babylonjs/core"
-import '@babylonjs/loaders/glTF'
+import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
 import { Input } from "@chakra-ui/react"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
-import { useRecoilState } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import useFile from "../../features/editor/hooks/useFile"
 
 import {
@@ -46,18 +46,19 @@ const BabylonSceneProvider = (props: PropTypes) => {
 
   const [scene, setScene] = useState<Scene>()
   // const [position, setPosition] = useRecoilState(positionState)
-  const [isUploading, setIsUploading] = useRecoilState(fileUploadState)
+  const isUploading = useRecoilValue(fileUploadState)
   const reactCanvas = useRef(null)
 
-  const { fileURL, handleFiles, fileName } = useFile(setIsUploading)
+  const { destURL, handleFiles, fileName } = useFile()
 
   useEffect(() => {
-    console.log(fileName, fileURL, isUploading)
+    console.log("provider", destURL, fileName)
     if (isUploading) return
-    if (fileURL === undefined) return
+    if (destURL === undefined) return
     if (scene) {
       SceneLoader.Append(
-        fileURL,
+        // publicフォルダ以外の場合どうするか検討
+        destURL,
         fileName,
         scene,
         () => {
@@ -67,11 +68,11 @@ const BabylonSceneProvider = (props: PropTypes) => {
           console.log("now loading...")
         },
         () => {
-          alert("読み込めませんでした")
+          console.warn("読み込めませんでした")
         }
       )
     }
-  }, [isUploading])
+  }, [isUploading, destURL, fileName])
 
   useEffect(() => {
     const { current: canvas } = reactCanvas
@@ -134,7 +135,10 @@ const BabylonSceneProvider = (props: PropTypes) => {
       <Input
         position={"fixed"}
         type="file"
-        onChange={handleFiles}
+        onChange={(e) => {
+          handleFiles(e)
+          e.target.value = ""
+        }}
         name="FILE"
       />
       {SceneControlPanel({
