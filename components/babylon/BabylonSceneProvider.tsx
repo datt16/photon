@@ -21,6 +21,7 @@ import {
 } from "../../features/editor/logic/CreateMesh"
 import { fileUploadState } from "../../globalStates/atoms/fileUploadState"
 import { positionState } from "../../globalStates/atoms/positionState"
+import InputFIleButton from "../elements/button/InputFIleButton"
 import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
 
 export interface PropTypes {
@@ -127,15 +128,16 @@ const BabylonSceneProvider = (props: PropTypes) => {
       }}
     >
       <FloatingControlPanel>
-        <Input
-          type="file"
+        <InputFIleButton
+          name="FILE"
           onChange={(e) => {
             handleFiles(e)
             e.target.value = ""
           }}
-          name="FILE"
-        />
-
+          size="xs"
+        >
+          インポート
+        </InputFIleButton>
       </FloatingControlPanel>
       <canvas
         ref={reactCanvas}
