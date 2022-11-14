@@ -21,9 +21,7 @@ import {
 } from "../../features/editor/logic/CreateMesh"
 import { fileUploadState } from "../../globalStates/atoms/fileUploadState"
 import { positionState } from "../../globalStates/atoms/positionState"
-import SceneControlPanel, {
-  PanelButtonType,
-} from "../elements/panel/SceneControlPanel"
+import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
 
 export interface PropTypes {
   antialias?: boolean
@@ -122,65 +120,23 @@ const BabylonSceneProvider = (props: PropTypes) => {
     }
   }, [reactCanvas, scene])
 
-  const onClickUid = () => {
-    console.log(new Date(), scene?.uid)
-  }
-
   return (
     <Div100vh
       style={{
         overflow: "hidden",
       }}
     >
-      <Input
-        position={"fixed"}
-        type="file"
-        onChange={(e) => {
-          handleFiles(e)
-          e.target.value = ""
-        }}
-        name="FILE"
-      />
-      {SceneControlPanel({
-        data: [
-          {
-            buttonType: PanelButtonType.section,
-            label: "開発用",
-          },
-          {
-            buttonType: PanelButtonType.default,
-            label: "show UID",
-            onButtonClicked: () => onClickUid,
-          },
-          {
-            buttonType: PanelButtonType.section,
-            label: "開発用 - 作成",
-          },
-          {
-            buttonType: PanelButtonType.default,
-            label: "CUBE",
-            onButtonClicked: () => addCube(scene),
-          },
-          {
-            buttonType: PanelButtonType.default,
-            label: "CAPSULE",
-            onButtonClicked: () => addCapsule(scene),
-          },
-          {
-            buttonType: PanelButtonType.default,
-            label: "GROUND",
-            onButtonClicked: () => addGround(scene),
-          },
-          // {
-          //   buttonType: PanelButtonType.vector3,
-          //   label: "CUBE2",
-          //   state: position,
-          //   // as使わない方法あれば考える
-          //   onButtonClicked: (pos) => addCube(scene, pos as Vector3),
-          //   onStateChanged: setPosition,
-          // },
-        ],
-      })}
+      <FloatingControlPanel>
+        <Input
+          type="file"
+          onChange={(e) => {
+            handleFiles(e)
+            e.target.value = ""
+          }}
+          name="FILE"
+        />
+
+      </FloatingControlPanel>
       <canvas
         ref={reactCanvas}
         style={{
