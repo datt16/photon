@@ -1,9 +1,10 @@
 import { Text } from "@chakra-ui/react"
+import Image from "next/image"
 import { ChangeEventHandler, useState } from "react"
 
 const useFile = () => {
   const [fileURL, setFileURL] = useState<string>()
-  const [fileName, setFileName] = useState<string>()
+  const [fileName, setFileName] = useState<string>("")
   const handleFiles: ChangeEventHandler<HTMLInputElement> = (event) => {
     const files = event.currentTarget.files
     if (!files || files?.length === 0) return
@@ -19,7 +20,6 @@ const Page = () => {
   const { handleFiles, fileURL } = useFile()
   return (
     <>
-      <img src={fileURL}></img>
       <Text fontSize={"lg"}>File Pick Test</Text>
       <input type={"file"} onChange={handleFiles} />
     </>
