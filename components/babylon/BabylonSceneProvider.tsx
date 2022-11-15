@@ -5,10 +5,11 @@ import {
   Scene,
   Vector3,
   SceneLoader,
+  WebGPUEngine,
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
-import { Input } from "@chakra-ui/react"
+import { Button, Input } from "@chakra-ui/react"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState, useRecoilValue } from "recoil"
@@ -75,50 +76,59 @@ const BabylonSceneProvider = (props: PropTypes) => {
 
   useEffect(() => {
     const { current: canvas } = reactCanvas
-    const engine = new Engine(
-      canvas,
-      antialias,
-      engineOptions,
-      adaptToDeviceRatio
-    )
 
-    if (scene === undefined) {
-      const _scene = new Scene(engine, sceneOptions)
-      console.log(new Date(), _scene.uid)
-      setScene(_scene)
-    }
+    if (canvas === null) return
+    const engine = new WebGPUEngine(canvas, {})
 
-    if (scene) {
-      const resize = () => {
-        scene.getEngine().resize()
+    // const engine = new Engine(
+    //   canvas,
+    //   antialias,
+    //   engineOptions,
+    //   adaptToDeviceRatio
+    // )
+
+    const initEngine = async () => {
+      await engine.initAsync()
+      engine.snapshotRendering = true
+      if (scene === undefined) {
+        const _scene = new Scene(engine, sceneOptions)
+        console.log(new Date(), _scene.uid)
+        setScene(_scene)
       }
 
-      // windowのイベントリスナにリサイズの処理を追加
-      if (window) {
-        window.addEventListener("resize", resize)
-      }
+      if (scene) {
+        // 以降描画し続けるための処理
+        scene.getEngine().runRenderLoop(() => {
+          if (typeof onRender === "function") onRender(scene)
+          scene.render()
+        })
+        const resize = () => {
+          scene.getEngine().resize()
+        }
 
-      // シーンの準備ができたらonSceneReady()で描画を始める
-      if (scene.isReady()) {
-        onSceneReady(scene)
-      } else {
-        scene.onReadyObservable.addOnce((scene) => onSceneReady(scene))
-      }
-
-      // 以降描画し続けるための処理
-      engine.runRenderLoop(() => {
-        if (typeof onRender === "function") onRender(scene)
-        scene.render()
-      })
-
-      // コンポーネントがディスポーズされたとき
-      return () => {
-        scene.getEngine().dispose()
+        // windowのイベントリスナにリサイズの処理を追加
         if (window) {
-          window.removeEventListener("resize", resize)
+          window.addEventListener("resize", resize)
+        }
+
+        // シーンの準備ができたらonSceneReady()で描画を始める
+        if (scene.isReady()) {
+          onSceneReady(scene)
+        } else {
+          scene.onReadyObservable.addOnce((scene) => onSceneReady(scene))
+        }
+
+        // コンポーネントがディスポーズされたとき
+        return () => {
+          scene.getEngine().dispose()
+          if (window) {
+            window.removeEventListener("resize", resize)
+          }
         }
       }
     }
+
+    initEngine()
   }, [reactCanvas, scene])
 
   return (
@@ -138,6 +148,13 @@ const BabylonSceneProvider = (props: PropTypes) => {
         >
           インポート
         </InputFIleButton>
+        <Button
+          onClick={() => {
+            console.log("debug", scene?.meshes)
+          }}
+        >
+          Make
+        </Button>
       </FloatingControlPanel>
       <canvas
         ref={reactCanvas}
