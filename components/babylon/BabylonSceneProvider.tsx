@@ -3,24 +3,16 @@ import {
   SceneOptions,
   Engine,
   Scene,
-  Vector3,
   SceneLoader,
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
-import { Input } from "@chakra-ui/react"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilValue } from "recoil"
 import useFile from "../../features/editor/hooks/useFile"
 
-import {
-  addCapsule,
-  addCube,
-  addGround,
-} from "../../features/editor/logic/CreateMesh"
 import { fileUploadState } from "../../globalStates/atoms/fileUploadState"
-import { positionState } from "../../globalStates/atoms/positionState"
 import InputFIleButton from "../elements/button/InputFIleButton"
 import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
 
