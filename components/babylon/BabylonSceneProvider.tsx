@@ -3,21 +3,18 @@ import {
   SceneOptions,
   Engine,
   Scene,
-  Vector3,
+  SceneLoader,
 } from "@babylonjs/core"
+import "@babylonjs/loaders/glTF"
+import "@babylonjs/loaders/OBJ"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
-import { useRecoilState } from "recoil"
+import { useRecoilValue } from "recoil"
+import useFile from "../../features/editor/hooks/useFile"
 
-import {
-  addCapsule,
-  addCube,
-  addGround,
-} from "../../features/editor/logic/CreateMesh"
-import { positionState } from "../../globalStates/atoms/positionState"
-import SceneControlPanel, {
-  PanelButtonType,
-} from "../elements/panel/SceneControlPanel"
+import { fileUploadState } from "../../globalStates/atoms/fileUploadState"
+import InputFIleButton from "../elements/button/InputFIleButton"
+import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
 
 export interface PropTypes {
   antialias?: boolean
@@ -39,8 +36,34 @@ const BabylonSceneProvider = (props: PropTypes) => {
   } = props
 
   const [scene, setScene] = useState<Scene>()
-  const [position, setPosition] = useRecoilState(positionState)
+  // const [position, setPosition] = useRecoilState(positionState)
+  const isUploading = useRecoilValue(fileUploadState)
   const reactCanvas = useRef(null)
+
+  const { destURL, handleFiles, fileName } = useFile()
+
+  useEffect(() => {
+    console.log("provider", destURL, fileName)
+    if (isUploading) return
+    if (destURL === undefined) return
+    if (scene) {
+      SceneLoader.Append(
+        // publicフォルダ以外の場合どうするか検討
+        destURL,
+        fileName,
+        scene,
+        () => {
+          alert("loaded")
+        },
+        () => {
+          console.log("now loading...")
+        },
+        () => {
+          console.warn("読み込めませんでした")
+        }
+      )
+    }
+  }, [isUploading, destURL, fileName])
 
   useEffect(() => {
     const { current: canvas } = reactCanvas
@@ -90,56 +113,24 @@ const BabylonSceneProvider = (props: PropTypes) => {
     }
   }, [reactCanvas, scene])
 
-  const onClickUid = () => {
-    console.log(new Date(), scene?.uid)
-  }
-
   return (
     <Div100vh
       style={{
         overflow: "hidden",
       }}
     >
-      {SceneControlPanel({
-        data: [
-          {
-            buttonType: PanelButtonType.section,
-            label: "開発用",
-          },
-          {
-            buttonType: PanelButtonType.default,
-            label: "show UID",
-            onButtonClicked: () => onClickUid,
-          },
-          {
-            buttonType: PanelButtonType.section,
-            label: "開発用 - 作成",
-          },
-          {
-            buttonType: PanelButtonType.default,
-            label: "CUBE",
-            onButtonClicked: () => addCube(scene),
-          },
-          {
-            buttonType: PanelButtonType.default,
-            label: "CAPSULE",
-            onButtonClicked: () => addCapsule(scene),
-          },
-          {
-            buttonType: PanelButtonType.default,
-            label: "GROUND",
-            onButtonClicked: () => addGround(scene),
-          },
-          {
-            buttonType: PanelButtonType.vector3,
-            label: "CUBE2",
-            state: position,
-            // as使わない方法あれば考える
-            onButtonClicked: (pos) => addCube(scene, pos as Vector3),
-            onStateChanged: setPosition,
-          },
-        ],
-      })}
+      <FloatingControlPanel>
+        <InputFIleButton
+          name="FILE"
+          onChange={(e) => {
+            handleFiles(e)
+            e.target.value = ""
+          }}
+          size="xs"
+        >
+          インポート
+        </InputFIleButton>
+      </FloatingControlPanel>
       <canvas
         ref={reactCanvas}
         style={{
