@@ -9,11 +9,9 @@ import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
-import { useRecoilValue } from "recoil"
-import useFile from "../../features/editor/hooks/useFile"
+import useAssetLoad from "../../features/editor/hooks/useAssetLoad"
 
-import { fileUploadState } from "../../globalStates/atoms/fileUploadState"
-import InputFIleButton from "../elements/button/InputFIleButton"
+import InputFileButton from "../elements/button/InputFIleButton"
 import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
 
 export interface PropTypes {
@@ -36,34 +34,8 @@ const BabylonSceneProvider = (props: PropTypes) => {
   } = props
 
   const [scene, setScene] = useState<Scene>()
-  // const [position, setPosition] = useRecoilState(positionState)
-  const isUploading = useRecoilValue(fileUploadState)
   const reactCanvas = useRef(null)
 
-  const { destURL, handleFiles, fileName } = useFile()
-
-  useEffect(() => {
-    console.log("provider", destURL, fileName)
-    if (isUploading) return
-    if (destURL === undefined) return
-    if (scene) {
-      SceneLoader.Append(
-        // publicフォルダ以外の場合どうするか検討
-        destURL,
-        fileName,
-        scene,
-        () => {
-          alert("loaded")
-        },
-        () => {
-          console.log("now loading...")
-        },
-        () => {
-          console.warn("読み込めませんでした")
-        }
-      )
-    }
-  }, [isUploading, destURL, fileName])
 
   useEffect(() => {
     const { current: canvas } = reactCanvas
@@ -113,6 +85,26 @@ const BabylonSceneProvider = (props: PropTypes) => {
     }
   }, [reactCanvas, scene])
 
+
+  const { handleSingle3dFileInput, assetUrl, assetType } = useAssetLoad()
+  useEffect(() => {
+    const Load3dData = async (scene: Scene, url: string, type: string) => {
+      await SceneLoader.AppendAsync(
+        url,
+        undefined,
+        scene,
+        undefined,
+        type
+      )
+    }
+
+    if (assetUrl == "") return
+    if (scene) {
+      Load3dData(scene, assetUrl, assetType)
+    }
+  }, [assetUrl, assetType])
+
+
   return (
     <Div100vh
       style={{
@@ -120,16 +112,16 @@ const BabylonSceneProvider = (props: PropTypes) => {
       }}
     >
       <FloatingControlPanel>
-        <InputFIleButton
+        <InputFileButton
           name="FILE"
           onChange={(e) => {
-            handleFiles(e)
+            handleSingle3dFileInput(e)
             e.target.value = ""
           }}
           size="xs"
         >
           インポート
-        </InputFIleButton>
+        </InputFileButton>
       </FloatingControlPanel>
       <canvas
         ref={reactCanvas}
