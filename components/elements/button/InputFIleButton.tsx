@@ -8,7 +8,7 @@ interface InputFIleButtonProps {
   children?: ReactNode
 }
 
-const InputFIleButton = (props: InputFIleButtonProps) => {
+const InputFileButton = (props: InputFIleButtonProps) => {
   const { onChange, size, name, children } = props
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -33,4 +33,4 @@ const InputFIleButton = (props: InputFIleButtonProps) => {
   )
 }
 
-export default InputFIleButton
+export default InputFileButton
