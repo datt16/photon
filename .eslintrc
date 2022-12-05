@@ -1,14 +1,9 @@
 {
-  "extends": ["next/core-web-vitals", "prettier"],
+  "extends": [
+    "next/core-web-vitals",
+    "prettier"
+  ],
   "rules": {
-    "react-hooks/exhaustive-deps": "off",
-    "import/order": [
-      "error",
-      {
-        "alphabetize": {
-          "order": "asc"
-        }
-      }
-    ]
+    "react-hooks/exhaustive-deps": "off"
   }
 }
