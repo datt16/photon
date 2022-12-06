@@ -1,28 +1,36 @@
-import { Color3, MeshBuilder, Scene, Vector3 } from "@babylonjs/core"
+import { Color3, Color4, MeshBuilder, Node, Scene, TransformNode, Vector3 } from "@babylonjs/core"
 import { range } from "../util"
 
 const drawAxisLines = (scene: Scene) => {
-  const xLinePoints = [Vector3.Zero(), new Vector3(200, 0, 0)]
-  const yLinePoints = [Vector3.Zero(), new Vector3(0, 200, 0)]
-  const zLinePoints = [Vector3.Zero(), new Vector3(0, 0, 200)]
-  const axisX = MeshBuilder.CreateLines(
-    "AxisX",
-    { points: xLinePoints, updatable: false },
-    scene
-  )
-  const axisY = MeshBuilder.CreateLines(
-    "AxisY",
-    { points: yLinePoints, updatable: false },
-    scene
-  )
-  const axisZ = MeshBuilder.CreateLines(
-    "AxisZ",
-    { points: zLinePoints, updatable: false },
-    scene
-  )
-  axisX.color = new Color3(1, 0, 0)
-  axisY.color = new Color3(0, 1, 0)
-  axisZ.color = new Color3(0, 0, 1)
+  const node = new TransformNode("gizmo", scene)
+
+  const dataset = [
+    {
+      name: "x",
+      vertex: [Vector3.Zero(), new Vector3(200, 0, 0)],
+      color: new Color3(1, 0, 0)
+    },
+    {
+      name: "y",
+      vertex: [Vector3.Zero(), new Vector3(0, 200, 0)],
+      color: new Color3(0, 1, 0)
+    },
+    {
+      name: "z",
+      vertex: [Vector3.Zero(), new Vector3(0, 0, 200)],
+      color: new Color3(0, 0, 1)
+    },
+  ]
+
+  dataset.map((item) => {
+    const line = MeshBuilder.CreateLines(
+      item.name,
+      { points: item.vertex, updatable: false },
+      scene
+    )
+    line.parent = node
+    line.color = item.color
+  })
 }
 
 const drawGrid = (
@@ -36,7 +44,8 @@ const drawGrid = (
   const linePointsBase = range(0, limit * 2, distance)
   const gridColor = new Color3(0.5, 0.5, 0.5)
 
-  //TODO: ラインを一つにまとめる
+  const gridX = new TransformNode("gridX", scene)
+  const gridZ = new TransformNode("gridZ", scene)
 
   const axisX = MeshBuilder.CreateLines(
     "Grid-X",
@@ -49,7 +58,7 @@ const drawGrid = (
   axisX.position = new Vector3(-100, 0, 0)
   axisX.color = gridColor
   linePointsBase.forEach((p, index) => {
-    const clone = axisX.clone(`Grid-X-${index}`)
+    const clone = axisX.clone(`Grid-X-${index}`, gridX)
     clone.position = new Vector3(p - limit, 0, 0)
   })
   axisX.dispose()
@@ -65,7 +74,7 @@ const drawGrid = (
   axisZ.position = new Vector3(0, 0, -1 * limit)
   axisZ.color = gridColor
   linePointsBase.forEach((p, index) => {
-    const clone = axisZ.clone(`Grid-Z-${index}`)
+    const clone = axisZ.clone(`Grid-Z-${index}`, gridZ)
     clone.position = new Vector3(0, 0, p - limit)
   })
   axisZ.dispose()
