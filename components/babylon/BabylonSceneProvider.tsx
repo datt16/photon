@@ -9,7 +9,9 @@ import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
+import { useRecoilState } from "recoil"
 import useAssetLoad from "../../features/editor/hooks/useAssetLoad"
+import { meshListState } from "../../globalStates/atoms/meshListState"
 
 import InputFileButton from "../elements/button/InputFIleButton"
 import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
@@ -34,6 +36,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
   } = props
 
   const [scene, setScene] = useState<Scene>()
+  const [meshList, setMeshList] = useRecoilState(meshListState)
   const reactCanvas = useRef(null)
 
 
@@ -64,6 +67,10 @@ const BabylonSceneProvider = (props: PropTypes) => {
 
       // シーンの準備ができたらonSceneReady()で描画を始める
       if (scene.isReady()) {
+        scene.onNewMeshAddedObservable.add(() => {
+          const meshes = scene.rootNodes
+          setMeshList(meshes.map(item => item.name))
+        })
         onSceneReady(scene)
       } else {
         scene.onReadyObservable.addOnce((scene) => onSceneReady(scene))
@@ -104,7 +111,6 @@ const BabylonSceneProvider = (props: PropTypes) => {
     }
   }, [assetUrl, assetType])
 
-
   return (
     <Div100vh
       style={{
@@ -122,6 +128,9 @@ const BabylonSceneProvider = (props: PropTypes) => {
         >
           インポート
         </InputFileButton>
+        {meshList.map((item) => {
+          return <li>{item}</li>
+        })}
       </FloatingControlPanel>
       <canvas
         ref={reactCanvas}

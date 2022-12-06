@@ -1,7 +1,9 @@
 import {
   ArcRotateCamera,
+  Camera,
   Color3,
   HemisphericLight,
+  Matrix,
   MeshBuilder,
   Scene,
   Vector3,
@@ -15,14 +17,16 @@ import { drawAxisLines, drawGrid } from "./Gizmo"
  */
 const onEditorReady = (scene: Scene) => {
   // カメラ
-  new ArcRotateCamera(
+  const camera: Camera = new ArcRotateCamera(
     "camera",
     -Math.PI / 2,
     Math.PI / 2.5,
     10,
     new Vector3(0, 0, 0),
     scene
-  ).attachControl(true)
+  )
+
+  camera.attachControl(true)
 
   // 環境光
   const light0 = new HemisphericLight("Hemi0", new Vector3(0, 1, 0), scene)
@@ -39,6 +43,16 @@ const onEditorReady = (scene: Scene) => {
   )
   drawGrid(scene, 5, 1)
   drawAxisLines(scene)
+
+  scene.onPointerDown = () => {
+    const ray = scene.createPickingRay(scene.pointerX, scene.pointerY, Matrix.Identity(), camera, false)
+    const hit = scene.pickWithRay(ray)
+
+    if (hit?.pickedMesh) {
+      console.log("mesh picked")
+    }
+  }
+
 }
 
 /**
@@ -47,6 +61,6 @@ const onEditorReady = (scene: Scene) => {
  *
  * シーンのレンダー毎に実行
  */
-const onEditorRendered = (scene: Scene) => {}
+const onEditorRendered = (scene: Scene) => { }
 
 export { onEditorReady, onEditorRendered }
