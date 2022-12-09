@@ -17,6 +17,7 @@ import { meshListState } from "../../globalStates/atoms/meshListState"
 
 import InputFileButton from "../elements/button/InputFIleButton"
 import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
+import getMeshData from "../../features/editor/logic/GetMeshData"
 
 export interface PropTypes {
   antialias?: boolean
@@ -70,8 +71,10 @@ const BabylonSceneProvider = (props: PropTypes) => {
       // シーンの準備ができたらonSceneReady()で描画を始める
       if (scene.isReady()) {
         scene.onNewMeshAddedObservable.add(() => {
-          const meshes = scene.rootNodes
-          setMeshList(meshes.map(item => item.name))
+          // const meshes = scene!.rootNodes
+          // setMeshList(
+          //   getMeshData(meshes)
+          // )
         })
         onSceneReady(scene)
       } else {
@@ -113,6 +116,11 @@ const BabylonSceneProvider = (props: PropTypes) => {
     }
   }, [assetUrl, assetType])
 
+
+  useEffect(() => {
+    console.log(meshList)
+  }, [meshList])
+
   return (
     <Div100vh
       style={{
@@ -136,9 +144,9 @@ const BabylonSceneProvider = (props: PropTypes) => {
             </InputFileButton>
           </HStack>
           <Accordion allowMultiple backgroundColor="ButtonFace" w="100%">
-            {meshList.map((item) => {
+            {/* {meshList.map((item) => {
               return (
-                <AccordionItem>
+                <AccordionItem key={item.key}>
                   <AccordionButton alignContent="center">
                     <PlusSquareIcon />
                     <Text ml={2} color="WindowText">{item}</Text>
@@ -147,11 +155,25 @@ const BabylonSceneProvider = (props: PropTypes) => {
                   </AccordionPanel>
                 </AccordionItem>
               )
-            })}
+            })} */}
           </Accordion>
+          <button onClick={() => {
+            const meshes = scene!.rootNodes
+            setMeshList(
+              (item) => {
+                let value = { ...item }
+                const rowMeshData: any = getMeshData(meshes)
+                Object.keys(rowMeshData).forEach((key) => {
+                  value.push(rowMeshData[key])
+                })
+                return value
+              }
+            )
+          }}>debug</button>
         </VStack>
       </FloatingControlPanel>
 
+      {/* getMeshData(meshes) */}
       <canvas
         ref={reactCanvas}
         style={{
