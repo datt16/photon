@@ -1,15 +1,16 @@
-import { Button, ResponsiveValue } from "@chakra-ui/react"
+import { Button, ResponsiveValue, Tooltip } from "@chakra-ui/react"
 import { ChangeEventHandler, ReactNode, useRef } from "react"
 
 interface InputFIleButtonProps {
   name: string
   size?: ResponsiveValue<(string & {}) | "sm" | "md" | "lg" | "xs">
   onChange?: ChangeEventHandler<HTMLInputElement>
-  children?: ReactNode
+  children?: ReactNode,
+  labelText?: string
 }
 
 const InputFileButton = (props: InputFIleButtonProps) => {
-  const { onChange, size, name, children } = props
+  const { onChange, size, name, children, labelText } = props
   const inputRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -21,14 +22,17 @@ const InputFileButton = (props: InputFIleButtonProps) => {
         hidden
         onChange={onChange}
       />
-      <Button
-        size={size}
-        onClick={() => {
-          inputRef.current?.click()
-        }}
-      >
-        {children}
-      </Button>
+      <Tooltip label={labelText} hasArrow>
+        <Button
+
+          size={size}
+          onClick={() => {
+            inputRef.current?.click()
+          }}
+        >
+          {children}
+        </Button>
+      </Tooltip>
     </>
   )
 }
