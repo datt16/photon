@@ -7,6 +7,8 @@ import {
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
+import { VStack, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, Icon, HStack } from "@chakra-ui/react"
+import { AddIcon, PlusSquareIcon } from "@chakra-ui/icons"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
@@ -118,20 +120,38 @@ const BabylonSceneProvider = (props: PropTypes) => {
       }}
     >
       <FloatingControlPanel>
-        <InputFileButton
-          name="FILE"
-          onChange={(e) => {
-            handleSingle3dFileInput(e)
-            e.target.value = ""
-          }}
-          size="xs"
-        >
-          インポート
-        </InputFileButton>
-        {meshList.map((item) => {
-          return <li>{item}</li>
-        })}
+        <VStack alignItems="start">
+          <HStack mt={2} mx={4}>
+            <Text>Inspector</Text>
+            <InputFileButton
+              name="FILE"
+              labelText="インポート"
+              onChange={(e) => {
+                handleSingle3dFileInput(e)
+                e.target.value = ""
+              }}
+              size="xs"
+            >
+              <AddIcon />
+            </InputFileButton>
+          </HStack>
+          <Accordion allowMultiple backgroundColor="ButtonFace" w="100%">
+            {meshList.map((item) => {
+              return (
+                <AccordionItem>
+                  <AccordionButton alignContent="center">
+                    <PlusSquareIcon />
+                    <Text ml={2} color="WindowText">{item}</Text>
+                  </AccordionButton>
+                  <AccordionPanel>
+                  </AccordionPanel>
+                </AccordionItem>
+              )
+            })}
+          </Accordion>
+        </VStack>
       </FloatingControlPanel>
+
       <canvas
         ref={reactCanvas}
         style={{
@@ -140,7 +160,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
           outline: "none",
         }}
       />
-    </Div100vh>
+    </Div100vh >
   )
 }
 
