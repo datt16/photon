@@ -17,7 +17,7 @@ import {
   Icon,
   HStack,
 } from "@chakra-ui/react"
-import { AddIcon, PlusSquareIcon } from "@chakra-ui/icons"
+import { AddIcon, ChevronRightIcon, PlusSquareIcon } from "@chakra-ui/icons"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
@@ -27,6 +27,7 @@ import { meshListState } from "../../globalStates/atoms/meshListState"
 import InputFileButton from "../elements/button/InputFIleButton"
 import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
 import getMeshData from "../../features/editor/logic/GetMeshData"
+import InspectorPanelIcon from "../elements/icon/InspectorPanelIcon"
 
 export interface PropTypes {
   antialias?: boolean
@@ -153,19 +154,19 @@ const BabylonSceneProvider = (props: PropTypes) => {
               return (
                 <AccordionItem key={meshList[key].id}>
                   <AccordionButton alignContent="center">
-                    <PlusSquareIcon />
+                    <ChevronRightIcon />
                     <Text ml={2} color="WindowText">
                       {key}
                     </Text>
                   </AccordionButton>
                   {meshList[key].child ? (
                     <AccordionPanel>
-                      {meshList[key].child.map((childKey) => (
-                        <AccordionItem key={childKey.id}>
+                      {meshList[key].child.map((meshItem) => (
+                        <AccordionItem key={meshItem.id}>
                           <AccordionButton alignContent="center">
-                            <PlusSquareIcon />
+                            <InspectorPanelIcon meshType={meshItem.type} />
                             <Text ml={2} color="WindowText">
-                              {childKey.name}
+                              {meshItem.name}
                             </Text>
                           </AccordionButton>
                         </AccordionItem>
