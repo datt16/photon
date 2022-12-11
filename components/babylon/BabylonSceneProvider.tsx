@@ -151,14 +151,27 @@ const BabylonSceneProvider = (props: PropTypes) => {
           <Accordion allowMultiple backgroundColor="ButtonFace" w="100%">
             {Object.keys(meshList).map((key) => {
               return (
-                <AccordionItem key={key}>
+                <AccordionItem key={meshList[key].id}>
                   <AccordionButton alignContent="center">
                     <PlusSquareIcon />
                     <Text ml={2} color="WindowText">
                       {key}
                     </Text>
                   </AccordionButton>
-                  <AccordionPanel></AccordionPanel>
+                  {meshList[key].child ? (
+                    <AccordionPanel>
+                      {meshList[key].child.map((childKey) => (
+                        <AccordionItem key={childKey.id}>
+                          <AccordionButton alignContent="center">
+                            <PlusSquareIcon />
+                            <Text ml={2} color="WindowText">
+                              {childKey.name}
+                            </Text>
+                          </AccordionButton>
+                        </AccordionItem>
+                      ))}
+                    </AccordionPanel>
+                  ) : null}
                 </AccordionItem>
               )
             })}

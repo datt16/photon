@@ -1,29 +1,33 @@
 import { Node } from "@babylonjs/core"
-import { MeshDataItem, SceneMeshData } from 'photon-babylon'
+import { MeshDataItemType, SceneMeshData } from "photon-babylon"
 
 let nodes: SceneMeshData = {}
 const getMeshData = (rootNodes: Node[]): {} => {
+  let childNode: MeshDataItemType[] = []
 
-    let childNode: MeshDataItem[] = []
+  rootNodes.forEach((item) => {
+    const child = item.getChildren()
+    const key = item.parent?.name ? item.parent?.name : "__root__"
 
-    rootNodes.forEach((item) => {
-        const child = item.getChildren()
-        const key = item.parent?.name ? item.parent?.name : "__root__"
+    if (child[0] == undefined) {
+      childNode.push({
+        name: item.name,
+        id: item.uniqueId.toString(),
+      })
+      nodes[key] = {
+        id: key,
+        child: childNode,
+      }
+    } else {
+      nodes[key] = {
+        id: key,
+        child: childNode,
+      }
+      getMeshData(child)
+    }
+  })
 
-        if (child[0] == undefined) {
-            childNode.push({
-                name: item.name,
-                id: item.uniqueId.toString()
-            })
-            nodes[key] = childNode
-        }
-        else {
-            nodes[key] = childNode
-            getMeshData(child)
-        }
-    })
-
-    return nodes
+  return nodes
 }
 
 export default getMeshData
