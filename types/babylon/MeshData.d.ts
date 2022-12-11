@@ -1,8 +1,10 @@
-type MeshDataItem = {
-  name: string
-  id: string
-}
+declare module "photon-babylon" {
+  export type MeshDataItem = {
+    name: string
+    id: string
+  }
 
-interface SceneMeshData {
-  [index: string]: MeshDataItem
+  export interface SceneMeshData {
+    [index: string]: MeshDataItem[]
+  }
 }

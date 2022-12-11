@@ -1,14 +1,9 @@
-import { AbstractMesh } from "@babylonjs/core"
+import { SceneMeshData } from 'photon-babylon'
 import { atom } from "recoil"
 import { AtomKeys } from "../recoilKeys"
 
-type meshData = {
-    name: string,
-    key: string
-}
 
-
-export const meshListState = atom<[]>({
+export const meshListState = atom<SceneMeshData>({
     key: AtomKeys.MESH_LIST_STAte,
-    default: [],
+    default: {},
 })

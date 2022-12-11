@@ -7,7 +7,16 @@ import {
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
-import { VStack, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, Icon, HStack } from "@chakra-ui/react"
+import {
+  VStack,
+  Text,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  Icon,
+  HStack,
+} from "@chakra-ui/react"
 import { AddIcon, PlusSquareIcon } from "@chakra-ui/icons"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
@@ -42,7 +51,6 @@ const BabylonSceneProvider = (props: PropTypes) => {
   const [meshList, setMeshList] = useRecoilState(meshListState)
   const reactCanvas = useRef(null)
 
-
   useEffect(() => {
     const { current: canvas } = reactCanvas
     const engine = new Engine(
@@ -71,10 +79,15 @@ const BabylonSceneProvider = (props: PropTypes) => {
       // シーンの準備ができたらonSceneReady()で描画を始める
       if (scene.isReady()) {
         scene.onNewMeshAddedObservable.add(() => {
-          // const meshes = scene!.rootNodes
-          // setMeshList(
-          //   getMeshData(meshes)
-          // )
+          const meshes = scene!.rootNodes
+          setMeshList((item) => {
+            let value = { ...item }
+            const meshData: any = getMeshData(meshes)
+            Object.keys(meshData).forEach((key) => {
+              value[key] = meshData[key]
+            })
+            return value
+          })
         })
         onSceneReady(scene)
       } else {
@@ -97,17 +110,10 @@ const BabylonSceneProvider = (props: PropTypes) => {
     }
   }, [reactCanvas, scene])
 
-
   const { handleSingle3dFileInput, assetUrl, assetType } = useAssetLoad()
   useEffect(() => {
     const Load3dData = async (scene: Scene, url: string, type: string) => {
-      await SceneLoader.AppendAsync(
-        url,
-        undefined,
-        scene,
-        undefined,
-        type
-      )
+      await SceneLoader.AppendAsync(url, undefined, scene, undefined, type)
     }
 
     if (assetUrl == "") return
@@ -115,7 +121,6 @@ const BabylonSceneProvider = (props: PropTypes) => {
       Load3dData(scene, assetUrl, assetType)
     }
   }, [assetUrl, assetType])
-
 
   useEffect(() => {
     console.log(meshList)
@@ -144,36 +149,22 @@ const BabylonSceneProvider = (props: PropTypes) => {
             </InputFileButton>
           </HStack>
           <Accordion allowMultiple backgroundColor="ButtonFace" w="100%">
-            {/* {meshList.map((item) => {
+            {Object.keys(meshList).map((key) => {
               return (
-                <AccordionItem key={item.key}>
+                <AccordionItem key={key}>
                   <AccordionButton alignContent="center">
                     <PlusSquareIcon />
-                    <Text ml={2} color="WindowText">{item}</Text>
+                    <Text ml={2} color="WindowText">
+                      {key}
+                    </Text>
                   </AccordionButton>
-                  <AccordionPanel>
-                  </AccordionPanel>
+                  <AccordionPanel></AccordionPanel>
                 </AccordionItem>
               )
-            })} */}
+            })}
           </Accordion>
-          <button onClick={() => {
-            const meshes = scene!.rootNodes
-            setMeshList(
-              (item) => {
-                let value = { ...item }
-                const rowMeshData: any = getMeshData(meshes)
-                Object.keys(rowMeshData).forEach((key) => {
-                  value.push(rowMeshData[key])
-                })
-                return value
-              }
-            )
-          }}>debug</button>
         </VStack>
       </FloatingControlPanel>
-
-      {/* getMeshData(meshes) */}
       <canvas
         ref={reactCanvas}
         style={{
@@ -182,7 +173,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
           outline: "none",
         }}
       />
-    </Div100vh >
+    </Div100vh>
   )
 }
 

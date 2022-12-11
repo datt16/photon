@@ -1,14 +1,10 @@
 import { Node } from "@babylonjs/core"
+import { MeshDataItem, SceneMeshData } from 'photon-babylon'
 
-type meshData = {
-    name: string,
-    key: string
-}
+let nodes: SceneMeshData = {}
+const getMeshData = (rootNodes: Node[]): {} => {
 
-let nodes: any = {}
-const getMeshData = (rootNodes: Node[], parentName?: string): {} => {
-
-    let childNode: meshData[] = []
+    let childNode: MeshDataItem[] = []
 
     rootNodes.forEach((item) => {
         const child = item.getChildren()
@@ -17,7 +13,7 @@ const getMeshData = (rootNodes: Node[], parentName?: string): {} => {
         if (child[0] == undefined) {
             childNode.push({
                 name: item.name,
-                key: item.uniqueId.toString()
+                id: item.uniqueId.toString()
             })
             nodes[key] = childNode
         }
