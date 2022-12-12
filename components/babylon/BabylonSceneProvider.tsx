@@ -68,7 +68,6 @@ const BabylonSceneProvider = (props: PropTypes) => {
 
     if (scene === undefined) {
       const _scene = new Scene(engine, sceneOptions)
-      console.log(new Date(), _scene.uid)
       setScene(_scene)
     }
 
@@ -170,7 +169,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
           <Accordion allowMultiple backgroundColor="ButtonFace" w="100%">
             {Object.keys(meshList).map((key) => {
               return meshList[key].isInspectorVisible ? (
-                <AccordionItem key={key + meshList[key].id}>
+                <AccordionItem key={key + meshList[key].name}>
                   <AccordionButton alignContent="center">
                     <AccordionIcon />
                     <Text ml={2} color="WindowText">
@@ -188,6 +187,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
                                 const id = meshItem.uid
                                 const target = scene?.getMeshByUniqueId(id)
                                 if (target) gizmoManager?.attachToMesh(target)
+                                console.log(scene?.rootNodes)
                               }}
                             >
                               <InspectorPanelIcon meshType={meshItem.type} />

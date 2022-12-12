@@ -44,14 +44,11 @@ const getMeshData = (rootNodes: Node[]): {} => {
 
     if (child[0] == undefined) {
       childNode.push(
-        MeshDataFactory(
-          item.name,
-          item.uniqueId,
-          checkMeshDataItemType(item)
-        )
+        MeshDataFactory(item.name, item.uniqueId, checkMeshDataItemType(item))
       )
       nodes[key] = {
-        id: key,
+        name: key,
+        uid: item.parent?.uniqueId ? item.parent?.uniqueId : item.uniqueId,
         child: childNode,
         isInspectorVisible: !key.includes(
           photonConst.Prefix.PREFIX_PHOTON_3DUI_ITEM
@@ -59,8 +56,9 @@ const getMeshData = (rootNodes: Node[]): {} => {
       }
     } else {
       nodes[key] = {
-        id: key,
+        name: key,
         child: childNode,
+        uid: item.parent?.uniqueId ? item.parent?.uniqueId : item.uniqueId,
         isInspectorVisible: !key.includes(
           photonConst.Prefix.PREFIX_PHOTON_3DUI_ITEM
         ),
@@ -68,6 +66,8 @@ const getMeshData = (rootNodes: Node[]): {} => {
       getMeshData(child)
     }
   })
+
+  console.log(nodes)
 
   return nodes
 }
