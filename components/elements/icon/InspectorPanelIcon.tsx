@@ -21,9 +21,23 @@ const InspectorPanelIcon = (props: {
     LIGHT: <Icon as={BsSun} />,
     LINE_MESH: <Icon as={MdShowChart} />,
     NONE: <></>,
+    GIZMOS: <></>,
+    GRID: <></>,
   }
 
-  return <>{type ? ObjectTypeIcon[type] : <></>}</>
+  return (
+    <>
+      {type ? (
+        Object.keys(ObjectTypeIcon).includes(type) ? (
+          ObjectTypeIcon[type]
+        ) : (
+          <></>
+        )
+      ) : (
+        <></>
+      )}
+    </>
+  )
 }
 
 export default InspectorPanelIcon
