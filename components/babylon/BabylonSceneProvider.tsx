@@ -162,14 +162,15 @@ const BabylonSceneProvider = (props: PropTypes) => {
                   {meshList[key].child ? (
                     <AccordionPanel>
                       {meshList[key].child.map((meshItem) => (
-                        <AccordionItem key={meshItem.id}>
-                          <AccordionButton alignContent="center">
-                            <InspectorPanelIcon meshType={meshItem.type} />
-                            <Text ml={2} color="WindowText">
-                              {meshItem.name}
-                            </Text>
-                          </AccordionButton>
-                        </AccordionItem>
+                        meshItem.isInspectorVisible ?
+                          (<AccordionItem key={meshItem.id}>
+                            <AccordionButton alignContent="center">
+                              <InspectorPanelIcon meshType={meshItem.type} />
+                              <Text ml={2} color="WindowText">
+                                {meshItem.name}
+                              </Text>
+                            </AccordionButton>
+                          </AccordionItem>) : <></>
                       ))}
                     </AccordionPanel>
                   ) : null}

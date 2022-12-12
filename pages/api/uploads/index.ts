@@ -2,10 +2,6 @@ import { createHash } from "crypto"
 import multer from "multer"
 import type { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
-import {
-  UPLOAD_FILE_FORM_FIELD_NAME,
-  UPLODED_FILE_DESTINATION_PATH,
-} from "../../../const/const"
 
 // Multerのインスタンスを提供する
 // Multer: mulutipart/form-data形式でアップロードされたファイルを処理するミドルウェア
@@ -14,7 +10,7 @@ const upload = multer({
     files: 1,
   },
   storage: multer.diskStorage({
-    destination: UPLODED_FILE_DESTINATION_PATH,
+    destination: photonConst.Upload.UPLODED_FILE_DESTINATION_PATH,
     filename: (_req, file, cb) => {
       const [fileName, fileType] = file.originalname.split(".")
       cb(
@@ -40,14 +36,17 @@ const apiRoute = nextConnect({
 })
 
 // ファイルPOST時
-apiRoute.post(upload.single(UPLOAD_FILE_FORM_FIELD_NAME), (req, res) => {
-  const fileData = req.file
-  res.status(200).json({
-    fileName: fileData?.filename,
-    folderPath: fileData?.destination.split("./public")[1] + "/",
+apiRoute.post(
+  upload.single(
+    photonConst.Upload.UPLOAD_FILE_FORM_FIELD_NAME
+  ), (req, res) => {
+    const fileData = req.file
+    res.status(200).json({
+      fileName: fileData?.filename,
+      folderPath: fileData?.destination.split("./public")[1] + "/",
+    })
+    res.end()
   })
-  res.end()
-})
 
 export default apiRoute
 

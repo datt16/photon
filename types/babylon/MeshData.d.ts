@@ -6,10 +6,14 @@ declare module "photon-babylon" {
     | "LIGHT"
     | "LINE_MESH"
     | "NONE"
+    | "GIZMOS"
+    | "GRID"
+
   export interface MeshDataItem {
     name: string
     id: string
     type: MeshDataItemType
+    isInspectorVisible: boolean
   }
 
   type NodeItemType = {
