@@ -18,6 +18,7 @@ declare module "photon-babylon" {
 
   type NodeItemType = {
     id: string
+    isInspectorVisible: boolean
     child: MeshDataItem[]
   }
 

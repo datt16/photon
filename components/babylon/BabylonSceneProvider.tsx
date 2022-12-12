@@ -16,6 +16,7 @@ import {
   AccordionPanel,
   Icon,
   HStack,
+  AccordionIcon,
 } from "@chakra-ui/react"
 import { AddIcon, ChevronRightIcon, PlusSquareIcon } from "@chakra-ui/icons"
 import React, { useEffect, useRef, useState } from "react"
@@ -151,30 +152,35 @@ const BabylonSceneProvider = (props: PropTypes) => {
           </HStack>
           <Accordion allowMultiple backgroundColor="ButtonFace" w="100%">
             {Object.keys(meshList).map((key) => {
-              return (
-                <AccordionItem key={meshList[key].id}>
+              return meshList[key].isInspectorVisible ? (
+                <AccordionItem key={key + meshList[key].id}>
                   <AccordionButton alignContent="center">
-                    <ChevronRightIcon />
+                    <AccordionIcon />
                     <Text ml={2} color="WindowText">
                       {key}
                     </Text>
                   </AccordionButton>
                   {meshList[key].child ? (
                     <AccordionPanel>
-                      {meshList[key].child.map((meshItem) => (
-                        meshItem.isInspectorVisible ?
-                          (<AccordionItem key={meshItem.id}>
+                      {meshList[key].child.map((meshItem) =>
+                        meshItem.isInspectorVisible ? (
+                          <AccordionItem key={meshItem.name + meshItem.id}>
                             <AccordionButton alignContent="center">
                               <InspectorPanelIcon meshType={meshItem.type} />
                               <Text ml={2} color="WindowText">
                                 {meshItem.name}
                               </Text>
                             </AccordionButton>
-                          </AccordionItem>) : <></>
-                      ))}
+                          </AccordionItem>
+                        ) : (
+                          <></>
+                        )
+                      )}
                     </AccordionPanel>
                   ) : null}
                 </AccordionItem>
+              ) : (
+                <></>
               )
             })}
           </Accordion>
