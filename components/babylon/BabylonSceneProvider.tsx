@@ -136,14 +136,6 @@ const BabylonSceneProvider = (props: PropTypes) => {
     console.log(meshList)
   }, [meshList])
 
-  // useGizmoManager
-  useEffect(() => {
-    if (gizmoManager) {
-      gizmoManager.positionGizmoEnabled = true
-      gizmoManager.usePointerToAttachGizmos = false
-    }
-  }, [gizmoManager])
-
   return (
     <Div100vh
       style={{

@@ -1,14 +1,18 @@
 import {
   ArcRotateCamera,
+  AxisDragGizmo,
   Camera,
   Color3,
+  CreateBox,
   GizmoManager,
   HemisphericLight,
   Matrix,
   MeshBuilder,
+  PointerInput,
   Scene,
   Vector3,
 } from "@babylonjs/core"
+import { IPointerEvent } from "babylonjs"
 import { drawAxisLines, drawGrid } from "./Gizmo"
 
 /**
@@ -45,7 +49,28 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
   drawGrid(scene, 5, 1)
   drawAxisLines(scene)
 
-  scene.onPointerDown = () => {
+  // <======== Gizmoの設定
+
+  gizmoManager.positionGizmoEnabled = true
+  gizmoManager.rotationGizmoEnabled = true
+  gizmoManager.scaleGizmoEnabled = true
+  gizmoManager.usePointerToAttachGizmos = false
+
+  if (gizmoManager.gizmos.positionGizmo?.scaleRatio)
+    gizmoManager.gizmos.positionGizmo.scaleRatio = 1.2
+
+  if (gizmoManager.gizmos.rotationGizmo?.scaleRatio)
+    gizmoManager.gizmos.rotationGizmo.scaleRatio = 0.5
+
+  if (gizmoManager.gizmos.scaleGizmo?.scaleRatio)
+    gizmoManager.gizmos.scaleGizmo.scaleRatio = 0.7
+
+
+  // <======== イベントリスナの設定
+
+  scene.onPointerDown = (evt: IPointerEvent) => {
+    if (evt.inputIndex == PointerInput.MiddleClick) return
+
     const ray = scene.createPickingRay(
       scene.pointerX,
       scene.pointerY,
@@ -57,6 +82,7 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
 
     if (gizmoManager) gizmoManager.attachToMesh(null)
     const picked = hit?.pickedMesh
+
     if (picked) {
       gizmoManager.attachToMesh(picked)
     }
@@ -69,6 +95,6 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
  *
  * シーンのレンダー毎に実行
  */
-const onEditorRendered = (scene: Scene) => {}
+const onEditorRendered = (scene: Scene) => { }
 
 export { onEditorReady, onEditorRendered }
