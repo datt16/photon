@@ -11,7 +11,7 @@ declare module "photon-babylon" {
 
   export interface MeshDataItem {
     name: string
-    id: string
+    uid: number
     type: MeshDataItemType
     isInspectorVisible: boolean
   }

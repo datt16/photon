@@ -4,6 +4,7 @@ import {
   Engine,
   Scene,
   SceneLoader,
+  GizmoManager,
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
@@ -36,7 +37,7 @@ export interface PropTypes {
   adaptToDeviceRatio?: boolean
   sceneOptions?: SceneOptions
   onRender: (scene: Scene) => void
-  onSceneReady: (scene: Scene) => void
+  onSceneReady: (scene: Scene, gizmoManager: GizmoManager) => void
 }
 
 const BabylonSceneProvider = (props: PropTypes) => {
@@ -50,6 +51,9 @@ const BabylonSceneProvider = (props: PropTypes) => {
   } = props
 
   const [scene, setScene] = useState<Scene>()
+
+  // useGizmoManger
+  const [gizmoManager, setGizmoManager] = useState<GizmoManager>()
   const [meshList, setMeshList] = useRecoilState(meshListState)
   const reactCanvas = useRef(null)
 
@@ -69,6 +73,7 @@ const BabylonSceneProvider = (props: PropTypes) => {
     }
 
     if (scene) {
+      const _gizmoManager = new GizmoManager(scene)
       const resize = () => {
         scene.getEngine().resize()
       }
@@ -80,6 +85,8 @@ const BabylonSceneProvider = (props: PropTypes) => {
 
       // シーンの準備ができたらonSceneReady()で描画を始める
       if (scene.isReady()) {
+        setGizmoManager(_gizmoManager)
+
         scene.onNewMeshAddedObservable.add(() => {
           const meshes = scene!.rootNodes
           setMeshList((item) => {
@@ -91,9 +98,11 @@ const BabylonSceneProvider = (props: PropTypes) => {
             return value
           })
         })
-        onSceneReady(scene)
+        onSceneReady(scene, _gizmoManager)
       } else {
-        scene.onReadyObservable.addOnce((scene) => onSceneReady(scene))
+        scene.onReadyObservable.addOnce((scene) =>
+          onSceneReady(scene, _gizmoManager)
+        )
       }
 
       // 以降描画し続けるための処理
@@ -127,6 +136,14 @@ const BabylonSceneProvider = (props: PropTypes) => {
   useEffect(() => {
     console.log(meshList)
   }, [meshList])
+
+  // useGizmoManager
+  useEffect(() => {
+    if (gizmoManager) {
+      gizmoManager.positionGizmoEnabled = true
+      gizmoManager.usePointerToAttachGizmos = false
+    }
+  }, [gizmoManager])
 
   return (
     <Div100vh
@@ -164,8 +181,15 @@ const BabylonSceneProvider = (props: PropTypes) => {
                     <AccordionPanel>
                       {meshList[key].child.map((meshItem) =>
                         meshItem.isInspectorVisible ? (
-                          <AccordionItem key={meshItem.name + meshItem.id}>
-                            <AccordionButton alignContent="center">
+                          <AccordionItem key={meshItem.name + meshItem.uid}>
+                            <AccordionButton
+                              alignContent="center"
+                              onClick={() => {
+                                const id = meshItem.uid
+                                const target = scene?.getMeshByUniqueId(id)
+                                if (target) gizmoManager?.attachToMesh(target)
+                              }}
+                            >
                               <InspectorPanelIcon meshType={meshItem.type} />
                               <Text ml={2} color="WindowText">
                                 {meshItem.name}

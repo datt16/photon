@@ -4,13 +4,13 @@ import { photonConst } from "../../../const/const"
 
 const MeshDataFactory = (
   name: string,
-  id: string,
+  id: number,
   type: MeshDataItemType,
   isInspectorVisible?: boolean
 ): MeshDataItem => {
   return {
     name,
-    id,
+    uid: id,
     type,
     isInspectorVisible: isInspectorVisible
       ? isInspectorVisible
@@ -46,7 +46,7 @@ const getMeshData = (rootNodes: Node[]): {} => {
       childNode.push(
         MeshDataFactory(
           item.name,
-          item.uniqueId.toString(),
+          item.uniqueId,
           checkMeshDataItemType(item)
         )
       )
