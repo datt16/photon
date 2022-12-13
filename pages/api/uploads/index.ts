@@ -2,6 +2,7 @@ import { createHash } from "crypto"
 import multer from "multer"
 import type { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
+import { photonConst } from '../../../const/const'
 
 // Multerのインスタンスを提供する
 // Multer: mulutipart/form-data形式でアップロードされたファイルを処理するミドルウェア
