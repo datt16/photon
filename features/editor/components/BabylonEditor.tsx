@@ -4,11 +4,7 @@ import { onEditorRendered, onEditorReady } from "../logic/Common"
 const BabylonEditor = () => {
 
     return (
-        <BabylonSceneProvider
-            antialias
-            onSceneReady={onEditorReady}
-            onRender={onEditorRendered}
-        />
+        <BabylonSceneProvider/>
     )
 }
 

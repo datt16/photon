@@ -34,9 +34,9 @@ const checkMeshDataItemType = (item: Node): MeshDataItemType => {
     : "NONE"
 }
 
-let nodes: SceneMeshData = {}
-const getMeshData = (rootNodes: Node[]): {} => {
-  let childNode: MeshDataItem[] = []
+const nodes: SceneMeshData = {}
+const getMeshData = (rootNodes: Node[]): SceneMeshData => {
+  const childNode: MeshDataItem[] = []
 
   rootNodes.forEach((item) => {
     const child = item.getChildren()
@@ -66,8 +66,6 @@ const getMeshData = (rootNodes: Node[]): {} => {
       getMeshData(child)
     }
   })
-
-  console.log(nodes)
 
   return nodes
 }

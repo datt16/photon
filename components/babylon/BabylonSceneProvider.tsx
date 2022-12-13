@@ -1,6 +1,4 @@
 import {
-  EngineOptions,
-  SceneOptions,
   Engine,
   Scene,
   SceneLoader,
@@ -15,11 +13,10 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  Icon,
   HStack,
   AccordionIcon,
 } from "@chakra-ui/react"
-import { AddIcon, ChevronRightIcon, PlusSquareIcon } from "@chakra-ui/icons"
+import { AddIcon } from "@chakra-ui/icons"
 import React, { useEffect, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
@@ -30,29 +27,18 @@ import InputFileButton from "../elements/button/InputFIleButton"
 import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
 import getMeshData from "../../features/editor/logic/GetMeshData"
 import InspectorPanelIcon from "../elements/icon/InspectorPanelIcon"
+import { SceneMeshData } from 'photon-babylon'
+import { onEditorRendered, onEditorReady } from "../../features/editor/logic/Common"
 
-export interface PropTypes {
-  antialias?: boolean
-  engineOptions?: EngineOptions
-  adaptToDeviceRatio?: boolean
-  sceneOptions?: SceneOptions
-  onRender: (scene: Scene) => void
-  onSceneReady: (scene: Scene, gizmoManager: GizmoManager) => void
-}
-
-const BabylonSceneProvider = (props: PropTypes) => {
-  const {
-    antialias,
-    engineOptions,
-    adaptToDeviceRatio,
-    sceneOptions,
-    onRender,
-    onSceneReady,
-  } = props
+const BabylonSceneProvider = () => {
+  const antialias = true
+  const onRender = onEditorRendered
+  const onSceneReady = onEditorReady
+  const engineOptions = undefined
+  const adaptToDeviceRatio = true
+  const sceneOptions = {}
 
   const [scene, setScene] = useState<Scene>()
-
-  // useGizmoManger
   const [gizmoManager, setGizmoManager] = useState<GizmoManager>()
   const [meshList, setMeshList] = useRecoilState(meshListState)
   const reactCanvas = useRef(null)
@@ -87,10 +73,10 @@ const BabylonSceneProvider = (props: PropTypes) => {
         setGizmoManager(_gizmoManager)
 
         scene.onNewMeshAddedObservable.add(() => {
-          const meshes = scene!.rootNodes
+          const meshes = scene.rootNodes
           setMeshList((item) => {
-            let value = { ...item }
-            const meshData: any = getMeshData(meshes)
+            const value = { ...item }
+            const meshData: SceneMeshData = getMeshData(meshes)
             Object.keys(meshData).forEach((key) => {
               value[key] = meshData[key]
             })
@@ -131,10 +117,6 @@ const BabylonSceneProvider = (props: PropTypes) => {
       Load3dData(scene, assetUrl, assetType)
     }
   }, [assetUrl, assetType])
-
-  useEffect(() => {
-    console.log(meshList)
-  }, [meshList])
 
   return (
     <Div100vh
@@ -179,7 +161,6 @@ const BabylonSceneProvider = (props: PropTypes) => {
                                 const id = meshItem.uid
                                 const target = scene?.getMeshByUniqueId(id)
                                 if (target) gizmoManager?.attachToMesh(target)
-                                console.log(scene?.rootNodes)
                               }}
                             >
                               <InspectorPanelIcon meshType={meshItem.type} />
