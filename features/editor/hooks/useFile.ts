@@ -1,7 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios"
 import { ChangeEventHandler, Ref, useEffect, useState } from "react"
 import { useSetRecoilState } from "recoil"
-import { UPLOAD_FILE_FORM_FIELD_NAME } from "../../../const/const"
+import { photonConst } from "../../../const/const"
+
 import { fileUploadState } from "../../../globalStates/atoms/fileUploadState"
 
 const useFile = () => {
@@ -16,7 +17,7 @@ const useFile = () => {
     }
     const formData: FormData = new FormData()
     Array.from(event.target.files).forEach((file, index) => {
-      formData.append(UPLOAD_FILE_FORM_FIELD_NAME, file)
+      formData.append(photonConst.Upload.UPLOAD_FILE_FORM_FIELD_NAME, file)
     })
     setFormData(formData)
 
@@ -35,7 +36,7 @@ const useFile = () => {
 
   useEffect(() => {
     async function uploadFile() {
-      if(!formData) return
+      if (!formData) return
       await axios.post("/api/uploads", formData, config).then((response) => {
         if (response.status !== 200) return
 

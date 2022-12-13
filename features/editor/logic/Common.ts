@@ -1,11 +1,18 @@
 import {
   ArcRotateCamera,
+  AxisDragGizmo,
+  Camera,
   Color3,
+  CreateBox,
+  GizmoManager,
   HemisphericLight,
+  Matrix,
   MeshBuilder,
+  PointerInput,
   Scene,
   Vector3,
 } from "@babylonjs/core"
+import { IPointerEvent } from "babylonjs"
 import { drawAxisLines, drawGrid } from "./Gizmo"
 
 /**
@@ -13,16 +20,18 @@ import { drawAxisLines, drawGrid } from "./Gizmo"
  *
  * 初回準備時に実行
  */
-const onEditorReady = (scene: Scene) => {
+const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
   // カメラ
-  new ArcRotateCamera(
+  const camera: Camera = new ArcRotateCamera(
     "camera",
     -Math.PI / 2,
     Math.PI / 2.5,
     10,
     new Vector3(0, 0, 0),
     scene
-  ).attachControl(true)
+  )
+
+  camera.attachControl(true)
 
   // 環境光
   const light0 = new HemisphericLight("Hemi0", new Vector3(0, 1, 0), scene)
@@ -39,6 +48,45 @@ const onEditorReady = (scene: Scene) => {
   )
   drawGrid(scene, 5, 1)
   drawAxisLines(scene)
+
+  // <======== Gizmoの設定
+
+  gizmoManager.positionGizmoEnabled = true
+  gizmoManager.rotationGizmoEnabled = true
+  gizmoManager.scaleGizmoEnabled = true
+  gizmoManager.usePointerToAttachGizmos = false
+
+  if (gizmoManager.gizmos.positionGizmo?.scaleRatio)
+    gizmoManager.gizmos.positionGizmo.scaleRatio = 1.2
+
+  if (gizmoManager.gizmos.rotationGizmo?.scaleRatio)
+    gizmoManager.gizmos.rotationGizmo.scaleRatio = 0.5
+
+  if (gizmoManager.gizmos.scaleGizmo?.scaleRatio)
+    gizmoManager.gizmos.scaleGizmo.scaleRatio = 0.7
+
+
+  // <======== イベントリスナの設定
+
+  scene.onPointerDown = (evt: IPointerEvent) => {
+    if (evt.inputIndex == PointerInput.MiddleClick) return
+
+    const ray = scene.createPickingRay(
+      scene.pointerX,
+      scene.pointerY,
+      Matrix.Identity(),
+      camera,
+      false
+    )
+    const hit = scene.pickWithRay(ray)
+
+    if (gizmoManager) gizmoManager.attachToMesh(null)
+    const picked = hit?.pickedMesh
+
+    if (picked) {
+      gizmoManager.attachToMesh(picked)
+    }
+  }
 }
 
 /**
@@ -47,6 +95,6 @@ const onEditorReady = (scene: Scene) => {
  *
  * シーンのレンダー毎に実行
  */
-const onEditorRendered = (scene: Scene) => {}
+const onEditorRendered = (scene: Scene) => { }
 
 export { onEditorReady, onEditorRendered }

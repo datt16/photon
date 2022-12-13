@@ -7,7 +7,7 @@ export enum PanelButtonType {
   "section",
 }
 
-const FloatingControlPanel = ({ children }: { children: ReactNode }) => {
+const FloatingControlPanel = ({ children }: { children: ReactNode[] | ReactNode }) => {
 
   const [isPanelOpen, setPanelOpen] = useState(true)
 
@@ -17,7 +17,6 @@ const FloatingControlPanel = ({ children }: { children: ReactNode }) => {
         mt={"1rem"}
         ml={"1rem"}
         alignItems={"start"}
-        p="6px"
         display="flex"
         borderRadius="lg"
         border={"1px solid"}
