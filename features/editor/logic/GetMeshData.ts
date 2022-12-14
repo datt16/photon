@@ -19,9 +19,9 @@ const MeshDataFactory = (
 }
 
 const checkMeshDataItemType = (item: Node): MeshDataItemType => {
-  return item.name.includes(photonConst.Prefix.PREFIX_3DUI_GIZMO)
+  return item.name.includes(photonConst.PREFIX_3DUI_GIZMO)
     ? "GIZMOS"
-    : item.name.includes(photonConst.Prefix.PREFIX_3DUI_GRID)
+    : item.name.includes(photonConst.PREFIX_3DUI_GRID)
     ? "GRID"
     : item instanceof LinesMesh
     ? "LINE_MESH"
@@ -50,18 +50,14 @@ const getMeshData = (rootNodes: Node[]): SceneMeshData => {
         name: key,
         uid: item.parent?.uniqueId ? item.parent?.uniqueId : item.uniqueId,
         child: childNode,
-        isInspectorVisible: !key.includes(
-          photonConst.Prefix.PREFIX_PHOTON_3DUI_ITEM
-        ),
+        isInspectorVisible: !key.includes(photonConst.PREFIX_PHOTON_3DUI_ITEM),
       }
     } else {
       nodes[key] = {
         name: key,
         child: childNode,
         uid: item.parent?.uniqueId ? item.parent?.uniqueId : item.uniqueId,
-        isInspectorVisible: !key.includes(
-          photonConst.Prefix.PREFIX_PHOTON_3DUI_ITEM
-        ),
+        isInspectorVisible: !key.includes(photonConst.PREFIX_PHOTON_3DUI_ITEM),
       }
       getMeshData(child)
     }

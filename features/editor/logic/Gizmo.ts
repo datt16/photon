@@ -8,9 +8,9 @@ import {
 import { range } from "../util"
 import { photonConst } from "../../../const/const"
 
-const _3DUI = photonConst.Prefix.PREFIX_PHOTON_3DUI_ITEM
-const _GRID = photonConst.Prefix.PREFIX_3DUI_GRID
-const _GIZMO = photonConst.Prefix.PREFIX_3DUI_GIZMO
+const _3DUI = photonConst.PREFIX_PHOTON_3DUI_ITEM
+const _GRID = photonConst.PREFIX_3DUI_GRID
+const _GIZMO = photonConst.PREFIX_3DUI_GIZMO
 
 const drawAxisLines = (scene: Scene) => {
   const node = new TransformNode(`${_3DUI}_${_GIZMO}`, scene)

@@ -1,5 +1,5 @@
-import axios, { AxiosRequestConfig } from "axios"
-import { ChangeEventHandler, Ref, useEffect, useState } from "react"
+import axios, { AxiosProgressEvent } from "axios"
+import { ChangeEventHandler, useEffect, useMemo, useState } from "react"
 import { useSetRecoilState } from "recoil"
 import { photonConst } from "../../../const/const"
 
@@ -16,23 +16,25 @@ const useFile = () => {
       return
     }
     const formData: FormData = new FormData()
-    Array.from(event.target.files).forEach((file, index) => {
-      formData.append(photonConst.Upload.UPLOAD_FILE_FORM_FIELD_NAME, file)
+    Array.from(event.target.files).forEach((file) => {
+      formData.append(photonConst.UPLOAD_FILE_FORM_FIELD_NAME, file)
     })
     setFormData(formData)
 
     setIsUploading(true)
   }
 
-  const config: AxiosRequestConfig = {
-    headers: { "Content-Type": "multipart/form-data" },
-    onUploadProgress: (event) => {
-      console.log(
-        `Current progress:`,
-        Math.round((event.loaded * 100) / event.total!)
-      )
-    },
-  }
+  const config = useMemo(() => {
+    return {
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: (event: AxiosProgressEvent) => {
+        console.log(
+          `Current progress:`,
+          event.total ? Math.round((event.loaded * 100) / event.total) : null
+        )
+      },
+    }
+  }, [])
 
   useEffect(() => {
     async function uploadFile() {
@@ -48,7 +50,7 @@ const useFile = () => {
       })
     }
     uploadFile()
-  }, [formData])
+  }, [config, formData, setIsUploading])
 
   return { handleFiles, destURL, fileName }
 }

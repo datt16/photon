@@ -11,7 +11,7 @@ const upload = multer({
     files: 1,
   },
   storage: multer.diskStorage({
-    destination: photonConst.Upload.UPLOADED_FILE_DESTINATION_PATH,
+    destination: photonConst.UPLOADED_FILE_DESTINATION_PATH,
     filename: (_req, file, cb) => {
       const [fileName, fileType] = file.originalname.split(".")
       cb(
@@ -36,7 +36,7 @@ const apiRoute = nextConnect({
 
 // ファイルPOST時
 apiRoute.post(
-  upload.single(photonConst.Upload.UPLOAD_FILE_FORM_FIELD_NAME),
+  upload.single(photonConst.UPLOAD_FILE_FORM_FIELD_NAME),
   (req, res) => {
     const fileData = req.file
     res.status(200).json({

@@ -12,7 +12,7 @@ const AddButtonWithControl = (
   label: string,
   state: Vector3,
   setValue: (newValue: Vector3) => void,
-  onButtonClicked = (position: Vector3) => {}
+  onButtonClicked: (position: Vector3) => void
 ) => {
   const { x, y, z } = state
 
