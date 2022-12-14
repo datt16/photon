@@ -118,7 +118,9 @@ const BabylonSceneProvider = () => {
     }
     if (assetUrl == "") return
     if (scene) {
-      Load3dData(scene, assetUrl, assetType)
+      Load3dData(scene, assetUrl, assetType).then(() => {
+        // do nothing | ファイル読み込み後の振る舞い
+      })
     }
   }, [assetUrl, assetType, scene])
 

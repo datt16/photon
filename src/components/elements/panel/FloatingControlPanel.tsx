@@ -1,15 +1,11 @@
 import { ScaleFade, VStack } from "@chakra-ui/react"
 import { ReactNode, useState } from "react"
-
-export enum PanelButtonType {
-  "default",
-  "vector3",
-  "section",
-}
-
-const FloatingControlPanel = ({ children }: { children: ReactNode[] | ReactNode }) => {
-
-  const [isPanelOpen, setPanelOpen] = useState(true)
+const FloatingControlPanel = ({
+  children,
+}: {
+  children: ReactNode[] | ReactNode
+}) => {
+  const [isPanelOpen] = useState(true)
 
   return (
     <ScaleFade initialScale={0.9} in={isPanelOpen}>
@@ -23,12 +19,10 @@ const FloatingControlPanel = ({ children }: { children: ReactNode[] | ReactNode 
         borderColor={"whiteAlpha.400"}
         position="fixed"
         zIndex={100}
-        shadow='md'
-        rounded='md'
+        shadow="md"
+        rounded="md"
       >
-        <div>
-          {children}
-        </div>
+        <div>{children}</div>
       </VStack>
     </ScaleFade>
   )

@@ -1,12 +1,6 @@
 import { Icon } from "@chakra-ui/react"
 import { MeshDataItemType } from "photon-babylon"
-import {
-  BsSun,
-  BsCamera,
-  BsBox,
-  BsChevronRight,
-  BsDiamond,
-} from "react-icons/bs"
+import { BsSun, BsCamera, BsBox, BsDiamond } from "react-icons/bs"
 import { MdShowChart } from "react-icons/md"
 
 const InspectorPanelIcon = (props: {

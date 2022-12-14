@@ -4,9 +4,8 @@
 
 ## /babylon
 
-Babylon.js シーンオブジェクトのProviderなどが置かれる
+Babylon.js シーンオブジェクトの Provider などが置かれる
 
 ## /elements
 
-UIコンポーネントなどが入れられる
-
+UI コンポーネントなどが入れられる

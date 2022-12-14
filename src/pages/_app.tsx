@@ -2,6 +2,7 @@ import "../styles/globals.css"
 import { ChakraProvider, extendTheme } from "@chakra-ui/react"
 import type { AppProps } from "next/app"
 import { RecoilRoot } from "recoil"
+import Head from "next/head"
 
 // 2. Extend the theme to include custom colors, fonts, etc
 const colors = {
@@ -16,11 +17,16 @@ const theme = extendTheme({ colors })
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <RecoilRoot>
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </RecoilRoot>
+    <div>
+      <Head>
+        <title>Project Photon</title>
+      </Head>
+      <RecoilRoot>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </RecoilRoot>
+    </div>
   )
 }
 

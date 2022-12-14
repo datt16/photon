@@ -89,12 +89,12 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
 
 /**
  * onEditorRendered
- * @param scene: Babylonjs
+ * @param _scene: Babylonjs
  *
  * シーンのレンダー毎に実行
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const onEditorRendered = (scene: Scene) => {
+const onEditorRendered = (_scene: Scene) => {
   // do nothing.
 }
 

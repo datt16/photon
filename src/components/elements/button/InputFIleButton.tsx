@@ -3,9 +3,9 @@ import { ChangeEventHandler, ReactNode, useRef } from "react"
 
 interface InputFIleButtonProps {
   name: string
-  size?: ResponsiveValue<(string) | "sm" | "md" | "lg" | "xs">
+  size?: ResponsiveValue<string | "sm" | "md" | "lg" | "xs">
   onChange?: ChangeEventHandler<HTMLInputElement>
-  children?: ReactNode,
+  children?: ReactNode
   labelText?: string
 }
 
@@ -24,7 +24,6 @@ const InputFileButton = (props: InputFIleButtonProps) => {
       />
       <Tooltip label={labelText} hasArrow>
         <Button
-
           size={size}
           onClick={() => {
             inputRef.current?.click()
