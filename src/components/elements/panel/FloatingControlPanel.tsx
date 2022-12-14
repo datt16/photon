@@ -21,6 +21,8 @@ const FloatingControlPanel = ({
         zIndex={100}
         shadow="md"
         rounded="md"
+        maxHeight={"10vh"}
+        overflow={"inherit"}
       >
         <div>{children}</div>
       </VStack>

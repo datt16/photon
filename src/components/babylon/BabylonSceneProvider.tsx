@@ -7,16 +7,7 @@ import {
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
-import {
-  VStack,
-  Text,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  HStack,
-  AccordionIcon,
-} from "@chakra-ui/react"
+import { VStack, Text, HStack } from "@chakra-ui/react"
 import { AddIcon } from "@chakra-ui/icons"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
@@ -27,12 +18,12 @@ import { meshListState } from "../../globalStates/atoms/meshListState"
 import InputFileButton from "../elements/button/InputFIleButton"
 import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
 import getMeshData from "../../features/editor/logic/GetMeshData"
-import InspectorPanelIcon from "../elements/icon/InspectorPanelIcon"
 import { SceneMeshData } from "photon-babylon"
 import {
   onEditorRendered,
   onEditorReady,
 } from "../../features/editor/logic/Common"
+import Inspector from "../../features/editor/components/inspector/Inspector"
 
 const BabylonSceneProvider = () => {
   // EditorScene eventListener
@@ -131,7 +122,7 @@ const BabylonSceneProvider = () => {
       }}
     >
       <FloatingControlPanel>
-        <VStack alignItems="start">
+        <VStack alignItems="start" maxH="90vh">
           <HStack mt={2} mx={4}>
             <Text>Inspector</Text>
             <InputFileButton
@@ -147,47 +138,20 @@ const BabylonSceneProvider = () => {
             </InputFileButton>
           </HStack>
 
-          <Accordion allowMultiple backgroundColor="ButtonFace" w="100%">
-            {Object.keys(meshList).map((key) => {
-              return meshList[key].isInspectorVisible ? (
-                <AccordionItem key={key + meshList[key].name}>
-                  <AccordionButton alignContent="center">
-                    <AccordionIcon />
-                    <Text ml={2} color="WindowText">
-                      {key}
-                    </Text>
-                  </AccordionButton>
-                  {meshList[key].child ? (
-                    <AccordionPanel>
-                      {meshList[key].child.map((meshItem) =>
-                        meshItem.isInspectorVisible ? (
-                          <AccordionItem key={meshItem.name + meshItem.uid}>
-                            <AccordionButton
-                              alignContent="center"
-                              onClick={() => {
-                                const id = meshItem.uid
-                                const target = scene?.getMeshByUniqueId(id)
-                                if (target) gizmoManager?.attachToMesh(target)
-                              }}
-                            >
-                              <InspectorPanelIcon meshType={meshItem.type} />
-                              <Text ml={2} color="WindowText">
-                                {meshItem.name}
-                              </Text>
-                            </AccordionButton>
-                          </AccordionItem>
-                        ) : (
-                          <></>
-                        )
-                      )}
-                    </AccordionPanel>
-                  ) : null}
-                </AccordionItem>
-              ) : (
-                <></>
-              )
-            })}
-          </Accordion>
+          <Inspector
+            meshList={meshList}
+            scene={scene}
+            onClickMeshItem={(meshItem) => {
+              const id = meshItem.uid
+              const target = scene?.getMeshByUniqueId(id)
+              if (target) gizmoManager?.attachToMesh(target)
+            }}
+            onClickNodeItem={(nodeItem) => {
+              const id = nodeItem.uid
+              const target = scene?.getTransformNodeByUniqueId(id)
+              if (target) gizmoManager?.attachToNode(target)
+            }}
+          />
         </VStack>
       </FloatingControlPanel>
       <canvas
