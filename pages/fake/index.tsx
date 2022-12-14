@@ -1,5 +1,4 @@
 import { Button, Text } from "@chakra-ui/react"
-import Image from "next/image"
 import { ChangeEventHandler, useState } from "react"
 
 import useFileHandler from "../../features/experimental/hooks/useFileHandler"
@@ -18,7 +17,7 @@ const useFile = () => {
 }
 
 const Page = () => {
-  const { handleFiles, fileURL } = useFile()
+  const { handleFiles } = useFile()
   const { readFile, file } = useFileHandler()
 
   return (

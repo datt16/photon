@@ -3,7 +3,7 @@ import { MeshBuilder, Scene, Vector3 } from "@babylonjs/core"
 const addCube = (
   scene?: Scene,
   position: Vector3 = new Vector3(0, 0, 0),
-  boxSize: number = 1
+  boxSize = 1
 ) => {
   const mesh = MeshBuilder.CreateBox("cube", { size: boxSize }, scene)
   mesh.position = position
@@ -12,7 +12,7 @@ const addCube = (
 const addCapsule = (
   scene?: Scene,
   position: Vector3 = new Vector3(0, 0, 0),
-  capsuleHeight: number = 1
+  capsuleHeight = 1
 ) => {
   const mesh = MeshBuilder.CreateCapsule(
     "capsule",
@@ -25,8 +25,8 @@ const addCapsule = (
 const addGround = (
   scene?: Scene,
   position: Vector3 = new Vector3(0, 0, 0),
-  groundWidth: number = 1,
-  groundHeight: number = 1
+  groundWidth = 1,
+  groundHeight = 1
 ) => {
   const mesh = MeshBuilder.CreateGround(
     "ground",

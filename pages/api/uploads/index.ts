@@ -2,7 +2,7 @@ import { createHash } from "crypto"
 import multer from "multer"
 import type { NextApiRequest, NextApiResponse } from "next"
 import nextConnect from "next-connect"
-import { photonConst } from '../../../const/const'
+import { photonConst } from "../../../const/const"
 
 // Multerのインスタンスを提供する
 // Multer: mulutipart/form-data形式でアップロードされたファイルを処理するミドルウェア
@@ -11,7 +11,7 @@ const upload = multer({
     files: 1,
   },
   storage: multer.diskStorage({
-    destination: photonConst.Upload.UPLODED_FILE_DESTINATION_PATH,
+    destination: photonConst.Upload.UPLOADED_FILE_DESTINATION_PATH,
     filename: (_req, file, cb) => {
       const [fileName, fileType] = file.originalname.split(".")
       cb(
@@ -26,10 +26,8 @@ const upload = multer({
     Next-Connect: メソッドベースでAPIが書けるようになるミドルウェア
  */
 const apiRoute = nextConnect({
-  onError(error: any, _req: NextApiRequest, res: NextApiResponse) {
-    res
-      .status(500)
-      .json({ error: `:( Sorry something Happend! ${error.message}` })
+  onError(error: unknown, _req: NextApiRequest, res: NextApiResponse) {
+    res.status(500).json({ error: `:( Sorry something Happened!` })
   },
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
     res.status(404).json({ error: `Method ${req.method} Not Allowed.` })
@@ -38,16 +36,16 @@ const apiRoute = nextConnect({
 
 // ファイルPOST時
 apiRoute.post(
-  upload.single(
-    photonConst.Upload.UPLOAD_FILE_FORM_FIELD_NAME
-  ), (req, res) => {
+  upload.single(photonConst.Upload.UPLOAD_FILE_FORM_FIELD_NAME),
+  (req, res) => {
     const fileData = req.file
     res.status(200).json({
       fileName: fileData?.filename,
       folderPath: fileData?.destination.split("./public")[1] + "/",
     })
     res.end()
-  })
+  }
+)
 
 export default apiRoute
 

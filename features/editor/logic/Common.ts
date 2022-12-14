@@ -1,9 +1,7 @@
 import {
   ArcRotateCamera,
-  AxisDragGizmo,
   Camera,
   Color3,
-  CreateBox,
   GizmoManager,
   HemisphericLight,
   Matrix,
@@ -17,6 +15,7 @@ import { drawAxisLines, drawGrid } from "./Gizmo"
 
 /**
  * @param scene: Babylonjs
+ * @param gizmoManager: GizmoManager
  *
  * 初回準備時に実行
  */
@@ -65,7 +64,6 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
   if (gizmoManager.gizmos.scaleGizmo?.scaleRatio)
     gizmoManager.gizmos.scaleGizmo.scaleRatio = 0.7
 
-
   // <======== イベントリスナの設定
 
   scene.onPointerDown = (evt: IPointerEvent) => {
@@ -95,6 +93,9 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
  *
  * シーンのレンダー毎に実行
  */
-const onEditorRendered = (scene: Scene) => { }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const onEditorRendered = (scene: Scene) => {
+  // do nothing.
+}
 
 export { onEditorReady, onEditorRendered }
