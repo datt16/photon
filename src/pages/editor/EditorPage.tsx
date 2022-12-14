@@ -1,4 +1,4 @@
-import Editor from "../../features/editor/components/BabylonEditor"
+import Editor from "../../features/editor/BabylonEditor"
 
 const EditorPage = () => {
   return (

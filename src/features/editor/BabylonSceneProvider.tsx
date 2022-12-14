@@ -12,18 +12,18 @@ import { AddIcon } from "@chakra-ui/icons"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
 import { useRecoilState } from "recoil"
-import useAssetLoad from "../../features/editor/hooks/useAssetLoad"
+import useAssetLoad from "./hooks/useAssetLoad"
 import { meshListState } from "../../globalStates/atoms/meshListState"
 
-import InputFileButton from "../elements/button/InputFIleButton"
-import FloatingControlPanel from "../elements/panel/FloatingControlPanel"
-import getMeshData from "../../features/editor/logic/GetMeshData"
+import InputFileButton from "./components/elements/button/InputFIleButton"
+import FloatingControlPanel from "./components/elements/panel/FloatingControlPanel"
+import getMeshData from "./babylonLogic/GetMeshData"
 import { SceneMeshData } from "photon-babylon"
 import {
   onEditorRendered,
   onEditorReady,
-} from "../../features/editor/logic/Common"
-import Inspector from "../../features/editor/components/inspector/Inspector"
+} from "./babylonLogic/Common"
+import Inspector from "./components/layouts/inspector/Inspector"
 
 const BabylonSceneProvider = () => {
   // EditorScene eventListener

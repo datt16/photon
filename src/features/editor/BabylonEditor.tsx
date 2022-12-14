@@ -1,4 +1,4 @@
-import BabylonSceneProvider from "../../../components/babylon/BabylonSceneProvider"
+import BabylonSceneProvider from "./BabylonSceneProvider"
 
 const BabylonEditor = () => {
   return <BabylonSceneProvider />

@@ -7,7 +7,7 @@ import {
   Text,
 } from "@chakra-ui/react"
 import React from "react"
-import InspectorPanelIcon from "../../../../components/elements/icon/InspectorPanelIcon"
+import InspectorPanelIcon from "./InspectorPanelIcon"
 import { MeshDataItem, NodeItemType, SceneMeshData } from "photon-babylon"
 import { Scene } from "@babylonjs/core"
 
