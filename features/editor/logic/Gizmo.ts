@@ -1,8 +1,6 @@
 import {
   Color3,
-  Color4,
   MeshBuilder,
-  Node,
   Scene,
   TransformNode,
   Vector3,
@@ -41,6 +39,7 @@ const drawAxisLines = (scene: Scene) => {
       { points: item.vertex, updatable: false },
       scene
     )
+
     line.color = item.color
     line.parent = node
     line.isPickable = false
@@ -49,9 +48,9 @@ const drawAxisLines = (scene: Scene) => {
 
 const drawGrid = (
   scene: Scene,
-  limit: number = 100,
-  distance: number = 1,
-  isVisible: boolean = true
+  limit = 100,
+  distance = 1,
+  isVisible = true
 ) => {
   if (!isVisible) return
 
