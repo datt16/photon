@@ -1,4 +1,4 @@
-import { Box, ScaleFade, VStack } from "@chakra-ui/react"
+import { Box, ScaleFade } from "@chakra-ui/react"
 import { ReactNode, useState } from "react"
 const FloatingControlPanel = ({
   children,

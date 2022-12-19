@@ -128,13 +128,16 @@ const BabylonEditor = () => {
   // ステートによってobserverの有無を切り替えたい
   useEffect(() => {
     if (sceneObservable && scene && gizmoManager) {
-      if (pickMode == "annotate") {
+      if (pickMode == "gizmo") {
+        scene.onPointerObservable.removeCallback(
+          sceneObservable.onAddAnnotateObserver
+        )
         scene.onPointerObservable.add(sceneObservable.onPickMeshObserver)
-      } else if (pickMode == "gizmo") {
+      } else if (pickMode == "annotate") {
         scene.onPointerObservable.removeCallback(
           sceneObservable.onPickMeshObserver
         )
-        //
+        scene.onPointerObservable.add(sceneObservable.onAddAnnotateObserver)
       }
     }
   }, [gizmoManager, pickMode, scene, sceneObservable])

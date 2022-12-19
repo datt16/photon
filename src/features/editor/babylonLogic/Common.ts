@@ -4,13 +4,10 @@ import {
   Color3,
   GizmoManager,
   HemisphericLight,
-  Matrix,
   MeshBuilder,
-  PointerInput,
   Scene,
   Vector3,
 } from "@babylonjs/core"
-import { IPointerEvent } from "babylonjs"
 import { drawAxisLines, drawGrid } from "./Gizmo"
 
 /**
@@ -85,7 +82,6 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
   //     gizmoManager.attachToMesh(picked)
   //   }
   // }
-
 }
 
 /**
