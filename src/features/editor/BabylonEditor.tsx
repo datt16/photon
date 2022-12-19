@@ -7,7 +7,7 @@ import {
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
-import { VStack, Text, HStack } from "@chakra-ui/react"
+import { VStack, Text, HStack, ButtonGroup, Button } from "@chakra-ui/react"
 import { AddIcon } from "@chakra-ui/icons"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
@@ -21,6 +21,8 @@ import getMeshData from "./babylonLogic/GetMeshData"
 import { SceneMeshData } from "photon-babylon"
 import { onEditorRendered, onEditorReady } from "./babylonLogic/Common"
 import Inspector from "./components/layouts/inspector/Inspector"
+import { pickModeState } from "../../globalStates/atoms/selectModeState"
+import { SceneObservable } from "./babylonLogic/SceneObservables"
 
 const BabylonEditor = () => {
   // EditorScene eventListener
@@ -40,6 +42,8 @@ const BabylonEditor = () => {
   // 3D scene state
   const [gizmoManager, setGizmoManager] = useState<GizmoManager>()
   const [meshList, setMeshList] = useRecoilState(meshListState)
+  const [pickMode, setPickMode] = useRecoilState(pickModeState)
+  const [isSceneReady, setIsSceneReady] = useState(false)
 
   // Babylon Engine & Scene variable
   const engine = useMemo((): Engine | undefined => {
@@ -90,10 +94,13 @@ const BabylonEditor = () => {
         })
       })
       onSceneReady(scene, _gizmoManager)
+      setIsSceneReady(true)
       return () => {
         if (window) {
           window.removeEventListener("resize", resize)
         }
+        scene.dispose()
+        setIsSceneReady(false)
       }
     }
   }, [renderCanvas, scene, engine, onRender, onSceneReady, setMeshList])
@@ -112,6 +119,26 @@ const BabylonEditor = () => {
     }
   }, [assetUrl, assetType, scene])
 
+  const sceneObservable = useMemo<SceneObservable | undefined>(() => {
+    if (scene && gizmoManager && isSceneReady) {
+      return new SceneObservable(scene, gizmoManager)
+    } else undefined
+  }, [gizmoManager, isSceneReady, scene])
+
+  // ステートによってobserverの有無を切り替えたい
+  useEffect(() => {
+    if (sceneObservable && scene && gizmoManager) {
+      if (pickMode == "annotate") {
+        scene.onPointerObservable.add(sceneObservable.onPickMeshObserver)
+      } else if (pickMode == "gizmo") {
+        scene.onPointerObservable.removeCallback(
+          sceneObservable.onPickMeshObserver
+        )
+        //
+      }
+    }
+  }, [gizmoManager, pickMode, scene, sceneObservable])
+
   return (
     <Div100vh
       style={{
@@ -119,37 +146,62 @@ const BabylonEditor = () => {
       }}
     >
       <FloatingControlPanel>
-        <VStack alignItems="start" maxH="90vh">
-          <HStack mt={2} mx={4}>
-            <Text>Inspector</Text>
-            <InputFileButton
-              name="FILE"
-              labelText="インポート"
-              onChange={(e) => {
-                handleSingle3dFileInput(e)
-                e.target.value = ""
-              }}
-              size="xs"
-            >
-              <AddIcon />
-            </InputFileButton>
-          </HStack>
+        <HStack>
+          <VStack
+            alignItems="start"
+            maxH="90vh"
+            border={"solid 1px"}
+            borderColor="white"
+            borderRadius="lg"
+          >
+            <HStack mt={2} mx={4}>
+              <Text>Inspector</Text>
+              <InputFileButton
+                name="FILE"
+                labelText="インポート"
+                onChange={(e) => {
+                  handleSingle3dFileInput(e)
+                  e.target.value = ""
+                }}
+                size="xs"
+              >
+                <AddIcon />
+              </InputFileButton>
+            </HStack>
 
-          <Inspector
-            meshList={meshList}
-            scene={scene}
-            onClickMeshItem={(meshItem) => {
-              const id = meshItem.uid
-              const target = scene?.getMeshByUniqueId(id)
-              if (target) gizmoManager?.attachToMesh(target)
-            }}
-            onClickNodeItem={(nodeItem) => {
-              const id = nodeItem.uid
-              const target = scene?.getTransformNodeByUniqueId(id)
-              if (target) gizmoManager?.attachToNode(target)
-            }}
-          />
-        </VStack>
+            <Inspector
+              meshList={meshList}
+              scene={scene}
+              onClickMeshItem={(meshItem) => {
+                const id = meshItem.uid
+                const target = scene?.getMeshByUniqueId(id)
+                if (target) gizmoManager?.attachToMesh(target)
+              }}
+              onClickNodeItem={(nodeItem) => {
+                const id = nodeItem.uid
+                const target = scene?.getTransformNodeByUniqueId(id)
+                if (target) gizmoManager?.attachToNode(target)
+              }}
+            />
+          </VStack>
+
+          <VStack>
+            <ButtonGroup>
+              <Button
+                colorScheme={pickMode == "gizmo" ? "blue" : "gray"}
+                onClick={() => setPickMode("gizmo")}
+              >
+                Move
+              </Button>
+              <Button
+                colorScheme={pickMode == "annotate" ? "blue" : "gray"}
+                onClick={() => setPickMode("annotate")}
+              >
+                Memo
+              </Button>
+            </ButtonGroup>
+          </VStack>
+        </HStack>
       </FloatingControlPanel>
       <canvas
         ref={(view) => {

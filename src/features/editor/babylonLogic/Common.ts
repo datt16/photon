@@ -66,25 +66,26 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
 
   // <======== イベントリスナの設定
 
-  scene.onPointerDown = (evt: IPointerEvent) => {
-    if (evt.inputIndex == PointerInput.MiddleClick) return
+  // scene.onPointerDown = (evt: IPointerEvent) => {
+  //   if (evt.inputIndex == PointerInput.MiddleClick) return
 
-    const ray = scene.createPickingRay(
-      scene.pointerX,
-      scene.pointerY,
-      Matrix.Identity(),
-      camera,
-      false
-    )
-    const hit = scene.pickWithRay(ray)
+  //   const ray = scene.createPickingRay(
+  //     scene.pointerX,
+  //     scene.pointerY,
+  //     Matrix.Identity(),
+  //     camera,
+  //     false
+  //   )
+  //   const hit = scene.pickWithRay(ray)
 
-    if (gizmoManager) gizmoManager.attachToMesh(null)
-    const picked = hit?.pickedMesh
+  //   if (gizmoManager) gizmoManager.attachToMesh(null)
+  //   const picked = hit?.pickedMesh
 
-    if (picked) {
-      gizmoManager.attachToMesh(picked)
-    }
-  }
+  //   if (picked) {
+  //     gizmoManager.attachToMesh(picked)
+  //   }
+  // }
+
 }
 
 /**
