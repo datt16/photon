@@ -13,9 +13,6 @@ import {
   HStack,
   ButtonGroup,
   Button,
-  Heading,
-  Box,
-  Avatar,
   StackDivider,
 } from "@chakra-ui/react"
 import { AddIcon } from "@chakra-ui/icons"
@@ -34,7 +31,6 @@ import Inspector from "./components/layouts/inspector/Inspector"
 import { pickModeState } from "../../globalStates/atoms/selectModeState"
 import { SceneObservable } from "./babylonLogic/SceneObservables"
 import { useAnnotateStore } from "../../libs/AnnotateStore"
-import { Card, CardHeader, CardBody } from "@chakra-ui/card"
 import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
 
 const BabylonEditor = () => {
