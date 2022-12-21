@@ -219,13 +219,7 @@ const BabylonEditor = () => {
       </FloatingControlPanel>
       <FloatingControlPanel position="right">
         <HStack>
-          <VStack
-            divider={<StackDivider />}
-            alignItems="start"
-            maxH="90vh"
-            maxW="300px"
-            spacing={0}
-          >
+          <VStack alignItems="start" maxW="300px" spacing={0}>
             <HStack py={2} px={4}>
               <Text>注釈</Text>
               <Button
@@ -244,15 +238,23 @@ const BabylonEditor = () => {
               </Button>
             </HStack>
 
-            {annotations.map((v, i) => (
-              <AnnotationItem
-                key={v.uniqueId + i}
-                index={v.index}
-                title={v.title}
-                user={v.userName}
-                description={v.description}
-              />
-            ))}
+            <VStack
+              maxH="90vh"
+              overflow={"auto"}
+              overflowX={"hidden"}
+              spacing={0}
+              divider={<StackDivider />}
+            >
+              {annotations.map((v, i) => (
+                <AnnotationItem
+                  key={v.uniqueId + i}
+                  index={v.index}
+                  title={v.title}
+                  user={v.userName}
+                  description={v.description}
+                />
+              ))}
+            </VStack>
           </VStack>
         </HStack>
       </FloatingControlPanel>
