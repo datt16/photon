@@ -7,7 +7,17 @@ import {
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
-import { VStack, Text, HStack, ButtonGroup, Button } from "@chakra-ui/react"
+import {
+  VStack,
+  Text,
+  HStack,
+  ButtonGroup,
+  Button,
+  Heading,
+  Box,
+  Avatar,
+  StackDivider,
+} from "@chakra-ui/react"
 import { AddIcon } from "@chakra-ui/icons"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
@@ -23,6 +33,9 @@ import { onEditorRendered, onEditorReady } from "./babylonLogic/Common"
 import Inspector from "./components/layouts/inspector/Inspector"
 import { pickModeState } from "../../globalStates/atoms/selectModeState"
 import { SceneObservable } from "./babylonLogic/SceneObservables"
+import { useAnnotateStore } from "../../libs/AnnotateStore"
+import { Card, CardHeader, CardBody } from "@chakra-ui/card"
+import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
 
 const BabylonEditor = () => {
   // EditorScene eventListener
@@ -142,6 +155,8 @@ const BabylonEditor = () => {
     }
   }, [gizmoManager, pickMode, scene, sceneObservable])
 
+  const { annotations, appendItem } = useAnnotateStore()
+
   return (
     <Div100vh
       style={{
@@ -206,6 +221,46 @@ const BabylonEditor = () => {
           </VStack>
         </HStack>
       </FloatingControlPanel>
+      <FloatingControlPanel position="right">
+        <HStack>
+          <VStack
+            divider={<StackDivider />}
+            alignItems="start"
+            maxH="90vh"
+            maxW="300px"
+            spacing={0}
+          >
+            <HStack py={2} px={4}>
+              <Text>注釈</Text>
+              <Button
+                size={"xs"}
+                onClick={() => {
+                  appendItem({
+                    title: "追加された注釈",
+                    description: "これは追加された注釈です。",
+                    index: 2,
+                    uniqueId: 222,
+                    userName: "@datt16",
+                  })
+                }}
+              >
+                <AddIcon />
+              </Button>
+            </HStack>
+
+            {annotations.map((v, i) => (
+              <AnnotationItem
+                key={v.uniqueId + i}
+                index={v.index}
+                title={v.title}
+                user={v.userName}
+                description={v.description}
+              />
+            ))}
+          </VStack>
+        </HStack>
+      </FloatingControlPanel>
+
       <canvas
         ref={(view) => {
           renderCanvas.current = view
