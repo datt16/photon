@@ -138,6 +138,7 @@ const BabylonEditor = () => {
     } else undefined
   }, [gizmoManager, isSceneReady, scene, setPoint])
 
+  // EditorScene Observable : 色々なイベントの機能が実装されてる
   useEffect(() => {
     if (sceneObservable && scene && gizmoManager) {
       if (pickMode == "gizmo") {

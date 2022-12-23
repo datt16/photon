@@ -1,22 +1,29 @@
+import { Vector3 } from "@babylonjs/core"
 import create from "zustand"
 
-type AnnotateItemType = {
+interface AnnotateItemType {
   title: string
   userName: string
   description: string
-  targetPosition?: {
-    x: number
-    y: number
-    z: number
-  }
+  targetPosition?: Vector3
   uniqueId: number
   index: number
 }
 
+interface EditingAnnotateItemType extends AnnotateItemType {
+  isReady: false
+}
+
 type AnnotateStoreType = {
   annotations: AnnotateItemType[]
-  setWith: (newAnnotations: AnnotateItemType[]) => void
+  editingAnnotation?: EditingAnnotateItemType
+
+  setAll: (newAnnotations: AnnotateItemType[]) => void
   appendItem: (newAnnotation: AnnotateItemType) => void
+
+  editNewAnnotation: (item: AnnotateItemType) => void
+  ready: () => void
+  submit: () => void
 }
 
 export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
@@ -30,7 +37,7 @@ export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
       index: 1,
     },
   ],
-  setWith: (newAnnotations) =>
+  setAll: (newAnnotations) =>
     set({
       annotations: newAnnotations,
     }),
@@ -38,4 +45,23 @@ export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
     set((state) => {
       return { annotations: [...state.annotations, newAnnotation] }
     }),
+  editNewAnnotation: (item) => {
+    set({ editingAnnotation: { ...item, isReady: false } })
+  },
+  ready: () =>
+    set((state) => {
+      // TODO: isReady置き換える
+      return {}
+    }),
+  submit: () => {
+    set((state) => {
+      return {
+        editNewAnnotation: undefined,
+        annotations: [
+          ...state.annotations,
+          state.editingAnnotation as AnnotateItemType,
+        ],
+      }
+    })
+  },
 }))
