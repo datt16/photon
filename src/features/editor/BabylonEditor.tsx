@@ -32,8 +32,12 @@ import { pickModeState } from "../../globalStates/atoms/selectModeState"
 import { SceneObservable } from "./babylonLogic/SceneObservables"
 import { useAnnotateStore } from "../../libs/AnnotateStore"
 import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
+import { useEditorStore } from "../../libs/EditorStore"
 
 const BabylonEditor = () => {
+  const { annotations, appendItem } = useAnnotateStore()
+  const { currentPickedPoint, setPoint } = useEditorStore()
+
   // EditorScene eventListener
   const onRender = onEditorRendered
   const onSceneReady = onEditorReady
@@ -130,11 +134,10 @@ const BabylonEditor = () => {
 
   const sceneObservable = useMemo<SceneObservable | undefined>(() => {
     if (scene && gizmoManager && isSceneReady) {
-      return new SceneObservable(scene, gizmoManager)
+      return new SceneObservable(scene, gizmoManager, (pos) => setPoint(pos))
     } else undefined
-  }, [gizmoManager, isSceneReady, scene])
+  }, [gizmoManager, isSceneReady, scene, setPoint])
 
-  // ステートによってobserverの有無を切り替えたい
   useEffect(() => {
     if (sceneObservable && scene && gizmoManager) {
       if (pickMode == "gizmo") {
@@ -150,8 +153,6 @@ const BabylonEditor = () => {
       }
     }
   }, [gizmoManager, pickMode, scene, sceneObservable])
-
-  const { annotations, appendItem } = useAnnotateStore()
 
   return (
     <Div100vh
@@ -270,6 +271,18 @@ const BabylonEditor = () => {
           outline: "none",
         }}
       />
+
+      <HStack
+        position="fixed"
+        width={"100vw"}
+        bottom={0}
+        zIndex={100}
+        background={"Background"}
+      >
+        <Text fontSize={"xs"}>
+          {currentPickedPoint?.toString() ?? "何も選択されていません。"}
+        </Text>
+      </HStack>
     </Div100vh>
   )
 }

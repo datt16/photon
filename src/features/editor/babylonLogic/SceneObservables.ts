@@ -6,11 +6,17 @@ import {
   PointerInput,
   Observer,
   PointerInfo,
-  Vector3,
   CreateSphere,
+  Vector3,
 } from "@babylonjs/core"
-import { Button3D, GUI3DManager } from "@babylonjs/gui/3D"
+import { GUI3DManager } from "@babylonjs/gui/3D"
 import { Nullable } from "babylonjs"
+
+/**
+ * TODO: SceneObservableの分割化
+ * 今後、機能を追加する度にこのクラスに書いていくとなると、型定義の項目が色々増えてしまって非常に分かりにくい
+ * このクラスはObservableの登録だけやって、Observableの中身は別のファイルで定義したものを使うようにしたい。
+ */
 
 export class SceneObservable {
   scene: Scene
@@ -18,6 +24,7 @@ export class SceneObservable {
   manager: GUI3DManager
   PickGizmoPointerObserver: Nullable<Observer<PointerInfo>>
   AddAnnotatePointerObserver: Nullable<Observer<PointerInfo>>
+  onAddAnnotate?: (pos: Vector3) => void
 
   onPickMeshObserver = (eventData: PointerInfo) => {
     if (eventData.type == PointerEventTypes.POINTERDOWN) {
@@ -66,14 +73,20 @@ export class SceneObservable {
           hit.pickedPoint.y,
           hit.pickedPoint.z
         )
+        if (this.onAddAnnotate) this.onAddAnnotate(hitPoint.position)
       }
     }
   }
 
-  constructor(scene: Scene, gizmoManager: GizmoManager) {
+  constructor(
+    scene: Scene,
+    gizmoManager: GizmoManager,
+    onAddAnnotate?: (pos: Vector3) => void
+  ) {
     this.scene = scene
     this.gizmoManager = gizmoManager
     this.manager = new GUI3DManager(scene)
+    this.onAddAnnotate = onAddAnnotate
 
     // Gizmo表示
     this.PickGizmoPointerObserver = scene.onPointerObservable.addOnce(
