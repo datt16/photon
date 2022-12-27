@@ -11,7 +11,7 @@ interface AnnotateItemType {
 }
 
 interface EditingAnnotateItemType extends AnnotateItemType {
-  isReady: false
+  isReady: boolean
 }
 
 type AnnotateStoreType = {
@@ -50,8 +50,12 @@ export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
   },
   ready: () =>
     set((state) => {
-      // TODO: isReady置き換える
-      return {}
+      return {
+        editingAnnotation: {
+          ...(state.editingAnnotation as AnnotateItemType),
+          isReady: true,
+        },
+      }
     }),
   submit: () => {
     set((state) => {
