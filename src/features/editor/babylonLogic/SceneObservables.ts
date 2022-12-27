@@ -12,6 +12,11 @@ import {
 import { GUI3DManager } from "@babylonjs/gui/3D"
 import { Nullable } from "babylonjs"
 
+type onAddAnnotate = (
+  pickedPointOnScene: Vector3,
+  pickedPointOnEditor: { x: number; y: number }
+) => void
+
 /**
  * TODO: SceneObservableの分割化
  * 今後、機能を追加する度にこのクラスに書いていくとなると、型定義の項目が色々増えてしまって非常に分かりにくい
@@ -24,7 +29,7 @@ export class SceneObservable {
   manager: GUI3DManager
   PickGizmoPointerObserver: Nullable<Observer<PointerInfo>>
   AddAnnotatePointerObserver: Nullable<Observer<PointerInfo>>
-  onAddAnnotate?: (pos: Vector3) => void
+  onAddAnnotate?: onAddAnnotate
 
   onPickMeshObserver = (eventData: PointerInfo) => {
     if (eventData.type == PointerEventTypes.POINTERDOWN) {
@@ -52,9 +57,12 @@ export class SceneObservable {
     if (eventData.type == PointerEventTypes.POINTERDOWN) {
       if (eventData.event.inputIndex == PointerInput.MiddleClick) return
 
+      const x = this.scene.pointerX
+      const y = this.scene.pointerY
+
       const ray = this.scene.createPickingRay(
-        this.scene.pointerX,
-        this.scene.pointerY,
+        x,
+        y,
         Matrix.Identity(),
         this.scene.cameras[0],
         false
@@ -73,7 +81,7 @@ export class SceneObservable {
           hit.pickedPoint.y,
           hit.pickedPoint.z
         )
-        if (this.onAddAnnotate) this.onAddAnnotate(hitPoint.position)
+        if (this.onAddAnnotate) this.onAddAnnotate(hitPoint.position, { x, y })
       }
     }
   }
@@ -81,7 +89,7 @@ export class SceneObservable {
   constructor(
     scene: Scene,
     gizmoManager: GizmoManager,
-    onAddAnnotate?: (pos: Vector3) => void
+    onAddAnnotate?: onAddAnnotate
   ) {
     this.scene = scene
     this.gizmoManager = gizmoManager

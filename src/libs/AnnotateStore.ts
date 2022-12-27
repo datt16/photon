@@ -17,6 +17,7 @@ interface EditingAnnotateItemType extends AnnotateItemType {
 type AnnotateStoreType = {
   annotations: AnnotateItemType[]
   editingAnnotation?: EditingAnnotateItemType
+  isEditing: boolean
 
   setAll: (newAnnotations: AnnotateItemType[]) => void
   appendItem: (newAnnotation: AnnotateItemType) => void
@@ -24,6 +25,8 @@ type AnnotateStoreType = {
   editNewAnnotation: (item: AnnotateItemType) => void
   ready: () => void
   submit: () => void
+
+  setIsEditing: (next: boolean) => void
 }
 
 export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
@@ -37,6 +40,7 @@ export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
       index: 1,
     },
   ],
+  isEditing: false,
   setAll: (newAnnotations) =>
     set({
       annotations: newAnnotations,
@@ -67,5 +71,8 @@ export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
         ],
       }
     })
+  },
+  setIsEditing: (next) => {
+    set({ isEditing: next })
   },
 }))

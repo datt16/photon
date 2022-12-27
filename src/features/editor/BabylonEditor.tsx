@@ -33,10 +33,11 @@ import { SceneObservable } from "./babylonLogic/SceneObservables"
 import { useAnnotateStore } from "../../libs/AnnotateStore"
 import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
 import { useEditorStore } from "../../libs/EditorStore"
+import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
 
 const BabylonEditor = () => {
-  const { annotations, appendItem } = useAnnotateStore()
-  const { currentPickedPoint, setPoint } = useEditorStore()
+  const { annotations, appendItem, isEditing } = useAnnotateStore()
+  const { currentPickedPoint, setPoint, setPointWindow } = useEditorStore()
 
   // EditorScene eventListener
   const onRender = onEditorRendered
@@ -132,11 +133,19 @@ const BabylonEditor = () => {
     }
   }, [assetUrl, assetType, scene])
 
+  // EditorScene Annotation feature logic
+  const [isAnnotationEditorOpen, setIsAnnotationEditorOpen] = useState(false)
+
   const sceneObservable = useMemo<SceneObservable | undefined>(() => {
     if (scene && gizmoManager && isSceneReady) {
-      return new SceneObservable(scene, gizmoManager, (pos) => setPoint(pos))
+      return new SceneObservable(scene, gizmoManager, (pos, pos2d) => {
+        // 注釈入力欄出す
+        setPoint(pos)
+        setPointWindow(pos2d)
+        setIsAnnotationEditorOpen(true)
+      })
     } else undefined
-  }, [gizmoManager, isSceneReady, scene, setPoint])
+  }, [gizmoManager, isSceneReady, scene, setPoint, setPointWindow])
 
   // EditorScene Observable : 色々なイベントの機能が実装されてる
   useEffect(() => {
@@ -261,6 +270,11 @@ const BabylonEditor = () => {
         </HStack>
       </FloatingControlPanel>
 
+      <AnnotationEditor
+        isEditorOpen={isAnnotationEditorOpen}
+        setIsEditorOpen={setIsAnnotationEditorOpen}
+      />
+
       <canvas
         ref={(view) => {
           renderCanvas.current = view
@@ -270,6 +284,9 @@ const BabylonEditor = () => {
           width: "100%",
           height: "100%",
           outline: "none",
+        }}
+        onClick={() => {
+          if (!isEditing) setIsAnnotationEditorOpen(false)
         }}
       />
 
