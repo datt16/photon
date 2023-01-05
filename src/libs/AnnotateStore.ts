@@ -1,7 +1,7 @@
 import { Vector3 } from "@babylonjs/core"
 import create from "zustand"
 
-interface AnnotateItemType {
+export interface AnnotateItemType {
   title: string
   userName: string
   description: string
@@ -16,7 +16,7 @@ interface EditingAnnotateItemType extends AnnotateItemType {
 
 type AnnotateStoreType = {
   annotations: AnnotateItemType[]
-  editingAnnotation?: EditingAnnotateItemType
+  editingAnnotation: EditingAnnotateItemType
   isEditing: boolean
 
   setAll: (newAnnotations: AnnotateItemType[]) => void
@@ -40,6 +40,15 @@ export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
       index: 1,
     },
   ],
+  editingAnnotation: {
+    title: "untitled",
+    userName: "",
+    description: "",
+    uniqueId: -1,
+    index: -1,
+    isReady: false,
+  },
+
   isEditing: false,
   setAll: (newAnnotations) =>
     set({

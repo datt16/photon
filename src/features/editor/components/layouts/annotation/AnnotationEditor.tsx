@@ -1,19 +1,30 @@
-import { useOutsideClick, Input, VStack, Button } from "@chakra-ui/react"
+import {
+  useOutsideClick,
+  Input,
+  VStack,
+  Button,
+  useToast,
+} from "@chakra-ui/react"
 import { useEffect, useRef } from "react"
-import { useAnnotateStore } from "../../../../../libs/AnnotateStore"
 import { useEditorStore } from "../../../../../libs/EditorStore"
+import useAnnotation from "../../../hooks/useAnnotation"
 
 const AnnotationEditor = (props: {
   isEditorOpen: boolean
   setIsEditorOpen: (next: boolean) => void
+  onDismiss?: () => void
 }): JSX.Element => {
   const { isEditorOpen, setIsEditorOpen } = props
 
-  const ref = useRef(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const dialogRootRef = useRef(null)
+  const inputDescriptionRef = useRef<HTMLInputElement>(null)
+  const toast = useToast()
 
+  const { submitData, setIsEditing } = useAnnotation()
+
+  // 外側タップ時にエディタを閉じる
   useOutsideClick({
-    ref: ref,
+    ref: dialogRootRef,
     handler: () => {
       console.log("Out side clicked")
       setIsEditorOpen(false)
@@ -24,18 +35,16 @@ const AnnotationEditor = (props: {
     currentPickedPointWindow: { x, y },
   } = useEditorStore()
 
-  const { setIsEditing } = useAnnotateStore()
-
-  // 表示時にフォーカス
+  // 表示時の処理
   useEffect(() => {
-    inputRef.current?.focus()
+    inputDescriptionRef.current?.focus()
   }, [isEditorOpen])
 
   return (
     <>
       {isEditorOpen ? (
         <VStack
-          ref={ref}
+          ref={dialogRootRef}
           left={x}
           top={y}
           position={"fixed"}
@@ -43,15 +52,24 @@ const AnnotationEditor = (props: {
           background="Background"
         >
           <Input
-            ref={inputRef}
+            ref={inputDescriptionRef}
             placeholder="注釈書くところ"
             onFocus={() => setIsEditing(true)}
             onBlur={() => setIsEditing(false)}
           ></Input>
           <Button
             onClick={() => {
+              submitData({
+                description: inputDescriptionRef.current?.value,
+              })
               setIsEditorOpen(false)
               setIsEditing(false)
+              toast({
+                title: "注釈を追加しました",
+                duration: 5000,
+                status: "success",
+                isClosable: true,
+              })
             }}
           >
             Submit
