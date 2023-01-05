@@ -10,23 +10,19 @@ export interface AnnotateItemType {
   index: number
 }
 
-interface EditingAnnotateItemType extends AnnotateItemType {
-  isReady: boolean
-}
-
 type AnnotateStoreType = {
   annotations: AnnotateItemType[]
-  editingAnnotation: EditingAnnotateItemType
+  editingData: AnnotateItemType
   isEditing: boolean
 
   setAll: (newAnnotations: AnnotateItemType[]) => void
   appendItem: (newAnnotation: AnnotateItemType) => void
 
   editNewAnnotation: (item: AnnotateItemType) => void
-  ready: () => void
   submit: () => void
 
   setIsEditing: (next: boolean) => void
+  clearEditing: () => void
 }
 
 export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
@@ -40,15 +36,13 @@ export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
       index: 1,
     },
   ],
-  editingAnnotation: {
+  editingData: {
     title: "untitled",
     userName: "",
     description: "",
     uniqueId: -1,
     index: -1,
-    isReady: false,
   },
-
   isEditing: false,
   setAll: (newAnnotations) =>
     set({
@@ -59,29 +53,30 @@ export const useAnnotateStore = create<AnnotateStoreType>((set) => ({
       return { annotations: [...state.annotations, newAnnotation] }
     }),
   editNewAnnotation: (item) => {
-    set({ editingAnnotation: { ...item, isReady: false } })
+    set({ editingData: item })
   },
-  ready: () =>
-    set((state) => {
-      return {
-        editingAnnotation: {
-          ...(state.editingAnnotation as AnnotateItemType),
-          isReady: true,
-        },
-      }
-    }),
   submit: () => {
     set((state) => {
       return {
-        editNewAnnotation: undefined,
         annotations: [
           ...state.annotations,
-          state.editingAnnotation as AnnotateItemType,
+          state.editingData as AnnotateItemType,
         ],
       }
     })
   },
   setIsEditing: (next) => {
     set({ isEditing: next })
+  },
+  clearEditing: () => {
+    set({
+      editingData: {
+        title: "untitled",
+        userName: "",
+        description: "",
+        uniqueId: -1,
+        index: -1,
+      },
+    })
   },
 }))

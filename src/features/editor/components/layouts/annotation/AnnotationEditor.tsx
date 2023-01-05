@@ -4,6 +4,7 @@ import {
   VStack,
   Button,
   useToast,
+  Textarea,
 } from "@chakra-ui/react"
 import { useEffect, useRef } from "react"
 import { useEditorStore } from "../../../../../libs/EditorStore"
@@ -17,7 +18,8 @@ const AnnotationEditor = (props: {
   const { isEditorOpen, setIsEditorOpen } = props
 
   const dialogRootRef = useRef(null)
-  const inputDescriptionRef = useRef<HTMLInputElement>(null)
+  const inputTitleRef = useRef<HTMLInputElement>(null)
+  const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
   const toast = useToast()
 
   const { submitData, setIsEditing } = useAnnotation()
@@ -50,16 +52,23 @@ const AnnotationEditor = (props: {
           position={"fixed"}
           zIndex={101}
           background="Background"
+          onBlur={() => setIsEditing(false)}
         >
           <Input
-            ref={inputDescriptionRef}
-            placeholder="注釈書くところ"
+            ref={inputTitleRef}
+            placeholder="注釈のタイトル"
             onFocus={() => setIsEditing(true)}
-            onBlur={() => setIsEditing(false)}
-          ></Input>
+          />
+          <Textarea
+            ref={inputDescriptionRef}
+            placeholder="注釈の詳細"
+            onFocus={() => setIsEditing(true)}
+          />
           <Button
+            size={"sm"}
             onClick={() => {
               submitData({
+                title: inputTitleRef.current?.value,
                 description: inputDescriptionRef.current?.value,
               })
               setIsEditorOpen(false)

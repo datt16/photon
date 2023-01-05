@@ -3,10 +3,11 @@ import { useEditorStore } from "../../../libs/EditorStore"
 
 const useAnnotation = () => {
   const {
-    editingAnnotation: current,
+    editingData: current,
     editNewAnnotation: editStoreData,
     submit: _submit,
     setIsEditing,
+    clearEditing: clear,
   } = useAnnotateStore()
   const { currentPickedPoint: targetPosition } = useEditorStore()
 
@@ -21,6 +22,7 @@ const useAnnotation = () => {
    * - setStateでformの値を監視すると変更される度にレンダーが走る
    */
   const submitData = (data: { title?: string; description?: string }) => {
+    clear()
     const title = data.title ?? current.title
     const description = data.description ?? current.description
     editStoreData({ ...current, title, description, targetPosition })
