@@ -12,7 +12,7 @@ import {
 } from "@babylonjs/core"
 import { drawAxisLines, drawGrid } from "./Gizmo"
 
-let camera: Camera
+let camera: ArcRotateCamera
 let targetPosition: Vector3, currentPosition: Vector3
 let cameraAnimate = false
 

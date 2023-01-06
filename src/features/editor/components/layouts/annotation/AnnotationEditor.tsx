@@ -6,7 +6,7 @@ import {
   useToast,
   Textarea,
 } from "@chakra-ui/react"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useEditorStore } from "../../../../../libs/EditorStore"
 import useAnnotation from "../../../hooks/useAnnotation"
 
@@ -17,19 +17,22 @@ const AnnotationEditor = (props: {
 }): JSX.Element => {
   const { isEditorOpen, setIsEditorOpen, onCanceled } = props
 
+  const [isSubmit, setSubmit] = useState(false)
   const dialogRootRef = useRef(null)
   const inputTitleRef = useRef<HTMLInputElement>(null)
   const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
   const toast = useToast()
 
-  const { submitData, setIsEditing, isEditing } = useAnnotation()
+  const { submitData } = useAnnotation()
 
+  const {
+    currentPickedPointWindow: { x, y },
+  } = useEditorStore()
+
+  // 表示時の処理
   useEffect(() => {
-    // submit時は走らないようにする
-    if (isEditorOpen == false && isEditing == false) {
-      if (onCanceled) onCanceled()
-    }
-  }, [isEditing, isEditorOpen, onCanceled])
+    inputDescriptionRef.current?.focus()
+  }, [isEditorOpen])
 
   // 外側タップ時にエディタを閉じる
   useOutsideClick({
@@ -40,14 +43,11 @@ const AnnotationEditor = (props: {
     },
   })
 
-  const {
-    currentPickedPointWindow: { x, y },
-  } = useEditorStore()
-
-  // 表示時の処理
   useEffect(() => {
-    inputDescriptionRef.current?.focus()
-  }, [isEditorOpen])
+    if (isEditorOpen == false) {
+      if (onCanceled && !isSubmit) onCanceled()
+    }
+  }, [isEditorOpen, isSubmit, onCanceled])
 
   return (
     <>
@@ -59,18 +59,9 @@ const AnnotationEditor = (props: {
           position={"fixed"}
           zIndex={101}
           background="Background"
-          onBlur={() => setIsEditing(false)}
         >
-          <Input
-            ref={inputTitleRef}
-            placeholder="注釈のタイトル"
-            onFocus={() => setIsEditing(true)}
-          />
-          <Textarea
-            ref={inputDescriptionRef}
-            placeholder="注釈の詳細"
-            onFocus={() => setIsEditing(true)}
-          />
+          <Input required ref={inputTitleRef} placeholder="注釈のタイトル" />
+          <Textarea ref={inputDescriptionRef} placeholder="注釈の詳細" />
           <Button
             size={"sm"}
             onClick={() => {
@@ -78,8 +69,8 @@ const AnnotationEditor = (props: {
                 title: inputTitleRef.current?.value,
                 description: inputDescriptionRef.current?.value,
               })
+              setSubmit(true)
               setIsEditorOpen(false)
-              setIsEditing(false)
               toast({
                 title: "注釈を追加しました",
                 duration: 5000,

@@ -4,6 +4,7 @@ import {
   SceneLoader,
   GizmoManager,
   Nullable,
+  ArcRotateCamera,
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
@@ -34,6 +35,7 @@ import { useAnnotateStore } from "../../libs/AnnotateStore"
 import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
 import { useEditorStore } from "../../libs/EditorStore"
 import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
+import { Vector3 } from "babylonjs"
 
 const BabylonEditor = () => {
   const { annotations, appendItem, isEditing } = useAnnotateStore()
@@ -280,6 +282,13 @@ const BabylonEditor = () => {
                   title={v.title}
                   user={v.userName}
                   description={v.description}
+                  onClick={() => {
+                    const camera = scene?.cameras[0] as ArcRotateCamera
+                    if (v.targetPosition && camera?.position) {
+                      camera.position = v.targetPosition
+                    }
+                    camera.radius += 4
+                  }}
                 />
               ))}
             </VStack>

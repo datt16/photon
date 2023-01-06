@@ -6,11 +6,20 @@ const AnnotationItem = (props: {
   title?: string
   user?: string
   description?: string
+  onClick?: () => void
 }): JSX.Element => {
-  const { index, title, user, description } = props
+  const { index, title, user, description, onClick } = props
 
   return (
-    <Card m={0} borderRadius={0} variant="filled" minWidth={300}>
+    <Card
+      m={0}
+      borderRadius={0}
+      variant="filled"
+      minWidth={300}
+      onClick={() => {
+        if (onClick) onClick()
+      }}
+    >
       <CardHeader pb={0}>
         <HStack gap={1}>
           <Avatar
