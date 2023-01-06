@@ -15,6 +15,7 @@ import {
   ButtonGroup,
   Button,
   StackDivider,
+  Icon,
 } from "@chakra-ui/react"
 import { AddIcon } from "@chakra-ui/icons"
 import React, { useEffect, useMemo, useRef, useState } from "react"
@@ -35,7 +36,9 @@ import { useAnnotateStore } from "../../libs/AnnotateStore"
 import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
 import { useEditorStore } from "../../libs/EditorStore"
 import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
-import { Vector3 } from "babylonjs"
+import useExport from "./hooks/useExport"
+import { BsSave2 } from "react-icons/bs"
+import { MdSaveAlt } from "react-icons/md"
 
 const BabylonEditor = () => {
   const { annotations, appendItem, isEditing } = useAnnotateStore()
@@ -140,6 +143,10 @@ const BabylonEditor = () => {
       })
     }
   }, [assetUrl, assetType, scene])
+
+  // Export feature logic
+  const { exportAnnotations, exportSceneAsBabylon, exportSceneAsGltf } =
+    useExport(scene)
 
   // EditorScene Annotation feature logic
   const [isAnnotationEditorOpen, setIsAnnotationEditorOpen] = useState(false)
@@ -253,18 +260,28 @@ const BabylonEditor = () => {
             <HStack py={2} px={4}>
               <Text>注釈</Text>
               <Button
-                size={"xs"}
+                size={"sm"}
                 onClick={() => {
-                  appendItem({
-                    title: "追加された注釈",
-                    description: "これは追加された注釈です。",
-                    index: 2,
-                    uniqueId: 222,
-                    userName: "@datt16",
-                  })
+                  exportAnnotations()
                 }}
               >
-                <AddIcon />
+                <Icon size={"sm"} as={MdSaveAlt} />
+              </Button>
+              <Button
+                size={"sm"}
+                onClick={() => {
+                  exportSceneAsBabylon()
+                }}
+              >
+                <Icon size={"sm"} as={MdSaveAlt} />
+              </Button>
+              <Button
+                size={"sm"}
+                onClick={() => {
+                  exportSceneAsGltf()
+                }}
+              >
+                GLTF
               </Button>
             </HStack>
 

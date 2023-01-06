@@ -1,6 +1,5 @@
 import {
   ArcRotateCamera,
-  Camera,
   Color3,
   Engine,
   GizmoManager,

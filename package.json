@@ -11,9 +11,10 @@
     "lint-fix": "eslint --cache --fix src/ && prettier --write src/"
   },
   "dependencies": {
-    "@babylonjs/core": "^5.27.1",
+    "@babylonjs/core": "^5.41.0",
     "@babylonjs/gui": "^5.27.1",
     "@babylonjs/loaders": "^5.32.1",
+    "@babylonjs/serializers": "^5.41.0",
     "@chakra-ui/icons": "^2.0.13",
     "@chakra-ui/react": "^2.4.2",
     "@emotion/react": "^11.10.5",
@@ -26,7 +27,6 @@
     "babylonjs-materials": "^5.22.0",
     "babylonjs-post-process": "^5.22.0",
     "babylonjs-procedural-textures": "^5.22.0",
-    "babylonjs-serializers": "^5.22.0",
     "framer-motion": "^6",
     "multer": "^1.4.5-lts.1",
     "next": "12.2.5",
