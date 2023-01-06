@@ -88,7 +88,7 @@ const BabylonEditor = () => {
   useEffect(() => {
     if (engine && scene) {
       engine.runRenderLoop(() => {
-        if (typeof onRender === "function") onRender(scene)
+        if (typeof onRender === "function") onRender(scene, engine)
         scene.render()
       })
 
