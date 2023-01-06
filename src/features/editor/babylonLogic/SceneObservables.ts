@@ -12,10 +12,11 @@ import {
 import { GUI3DManager } from "@babylonjs/gui/3D"
 import { Nullable } from "babylonjs"
 
-type onAddAnnotate = (
-  pickedPointOnScene: Vector3,
+type onAddAnnotate = (args: {
+  pickedPointOnScene: Vector3
   pickedPointOnEditor: { x: number; y: number }
-) => void
+  pointObjectUid: number
+}) => void
 
 /**
  * TODO: SceneObservableの分割化
@@ -81,7 +82,12 @@ export class SceneObservable {
           hit.pickedPoint.y,
           hit.pickedPoint.z
         )
-        if (this.onAddAnnotate) this.onAddAnnotate(hitPoint.position, { x, y })
+        if (this.onAddAnnotate)
+          this.onAddAnnotate({
+            pickedPointOnScene: hitPoint.position,
+            pickedPointOnEditor: { x, y },
+            pointObjectUid: hitPoint.uniqueId,
+          })
       }
     }
   }

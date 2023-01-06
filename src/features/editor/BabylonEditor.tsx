@@ -37,7 +37,13 @@ import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
 
 const BabylonEditor = () => {
   const { annotations, appendItem, isEditing } = useAnnotateStore()
-  const { currentPickedPoint, setPoint, setPointWindow } = useEditorStore()
+  const {
+    currentPickedPoint,
+    setPoint,
+    setPointWindow,
+    setPointerMeshUid,
+    pointerMeshUid,
+  } = useEditorStore()
 
   // EditorScene eventListener
   const onRender = onEditorRendered
@@ -138,14 +144,22 @@ const BabylonEditor = () => {
 
   const sceneObservable = useMemo<SceneObservable | undefined>(() => {
     if (scene && gizmoManager && isSceneReady) {
-      return new SceneObservable(scene, gizmoManager, (pos, pos2d) => {
+      return new SceneObservable(scene, gizmoManager, (args) => {
+        setPointerMeshUid(args.pointObjectUid)
         // 注釈入力欄出す
-        setPoint(pos)
-        setPointWindow(pos2d)
+        setPoint(args.pickedPointOnScene)
+        setPointWindow(args.pickedPointOnEditor)
         setIsAnnotationEditorOpen(true)
       })
     } else undefined
-  }, [gizmoManager, isSceneReady, scene, setPoint, setPointWindow])
+  }, [
+    gizmoManager,
+    isSceneReady,
+    scene,
+    setPoint,
+    setPointWindow,
+    setPointerMeshUid,
+  ])
 
   // EditorScene Observable : 色々なイベントの機能が実装されてる
   useEffect(() => {
@@ -164,6 +178,9 @@ const BabylonEditor = () => {
     }
   }, [gizmoManager, pickMode, scene, sceneObservable])
 
+  useEffect(() => {
+    console.log(pointerMeshUid)
+  }, [pointerMeshUid])
   return (
     <Div100vh
       style={{
@@ -273,6 +290,11 @@ const BabylonEditor = () => {
       <AnnotationEditor
         isEditorOpen={isAnnotationEditorOpen}
         setIsEditorOpen={setIsAnnotationEditorOpen}
+        onCanceled={() => {
+          console.log("canceled", pointerMeshUid)
+          if (pointerMeshUid)
+            scene?.getMeshByUniqueId(pointerMeshUid)?.dispose()
+        }}
       />
 
       <canvas

@@ -7,6 +7,7 @@ const useAnnotation = () => {
     editNewAnnotation: editStoreData,
     submit: _submit,
     setIsEditing,
+    isEditing,
     clearEditing: clear,
   } = useAnnotateStore()
   const { currentPickedPoint: targetPosition } = useEditorStore()
@@ -32,6 +33,7 @@ const useAnnotation = () => {
   return {
     submitData,
     setIsEditing,
+    isEditing,
   }
 }
 

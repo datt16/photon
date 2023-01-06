@@ -13,16 +13,23 @@ import useAnnotation from "../../../hooks/useAnnotation"
 const AnnotationEditor = (props: {
   isEditorOpen: boolean
   setIsEditorOpen: (next: boolean) => void
-  onDismiss?: () => void
+  onCanceled?: () => void
 }): JSX.Element => {
-  const { isEditorOpen, setIsEditorOpen } = props
+  const { isEditorOpen, setIsEditorOpen, onCanceled } = props
 
   const dialogRootRef = useRef(null)
   const inputTitleRef = useRef<HTMLInputElement>(null)
   const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
   const toast = useToast()
 
-  const { submitData, setIsEditing } = useAnnotation()
+  const { submitData, setIsEditing, isEditing } = useAnnotation()
+
+  useEffect(() => {
+    // submit時は走らないようにする
+    if (isEditorOpen == false && isEditing == false) {
+      if (onCanceled) onCanceled()
+    }
+  }, [isEditing, isEditorOpen, onCanceled])
 
   // 外側タップ時にエディタを閉じる
   useOutsideClick({
