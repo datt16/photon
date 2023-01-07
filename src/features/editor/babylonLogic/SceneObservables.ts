@@ -9,7 +9,6 @@ import {
   CreateSphere,
   Vector3,
 } from "@babylonjs/core"
-import { GUI3DManager } from "@babylonjs/gui/3D"
 import { Nullable } from "babylonjs"
 
 type onAddAnnotate = (args: {
@@ -27,7 +26,6 @@ type onAddAnnotate = (args: {
 export class SceneObservable {
   scene: Scene
   gizmoManager: GizmoManager
-  manager: GUI3DManager
   PickGizmoPointerObserver: Nullable<Observer<PointerInfo>>
   AddAnnotatePointerObserver: Nullable<Observer<PointerInfo>>
   onAddAnnotate?: onAddAnnotate
@@ -99,7 +97,6 @@ export class SceneObservable {
   ) {
     this.scene = scene
     this.gizmoManager = gizmoManager
-    this.manager = new GUI3DManager(scene)
     this.onAddAnnotate = onAddAnnotate
 
     // Gizmo表示

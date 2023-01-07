@@ -37,11 +37,10 @@ import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
 import { useEditorStore } from "../../libs/EditorStore"
 import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
 import useExport from "./hooks/useExport"
-import { BsSave2 } from "react-icons/bs"
 import { MdSaveAlt } from "react-icons/md"
 
 const BabylonEditor = () => {
-  const { annotations, appendItem, isEditing } = useAnnotateStore()
+  const { annotations, isEditing } = useAnnotateStore()
   const {
     currentPickedPoint,
     setPoint,
