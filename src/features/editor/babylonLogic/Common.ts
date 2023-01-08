@@ -1,17 +1,19 @@
 import {
   ArcRotateCamera,
-  Camera,
   Color3,
+  Engine,
   GizmoManager,
   HemisphericLight,
-  Matrix,
+  KeyboardEventTypes,
   MeshBuilder,
-  PointerInput,
   Scene,
   Vector3,
 } from "@babylonjs/core"
-import { IPointerEvent } from "babylonjs"
 import { drawAxisLines, drawGrid } from "./Gizmo"
+
+let camera: ArcRotateCamera
+let targetPosition: Vector3, currentPosition: Vector3
+let cameraAnimate = false
 
 /**
  * @param scene: Babylonjs
@@ -20,8 +22,7 @@ import { drawAxisLines, drawGrid } from "./Gizmo"
  * 初回準備時に実行
  */
 const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
-  // カメラ
-  const camera: Camera = new ArcRotateCamera(
+  camera = new ArcRotateCamera(
     "camera",
     -Math.PI / 2,
     Math.PI / 2.5,
@@ -29,8 +30,11 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
     new Vector3(0, 0, 0),
     scene
   )
-
+  camera.minZ = 0.001
   camera.attachControl(true)
+
+  targetPosition = camera.position
+  currentPosition = camera.position
 
   // 環境光
   const light0 = new HemisphericLight("Hemi0", new Vector3(0, 1, 0), scene)
@@ -64,27 +68,27 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
   if (gizmoManager.gizmos.scaleGizmo?.scaleRatio)
     gizmoManager.gizmos.scaleGizmo.scaleRatio = 0.7
 
-  // <======== イベントリスナの設定
+  scene.onKeyboardObservable.add((kbInfo) => {
+    switch (kbInfo.type) {
+      case KeyboardEventTypes.KEYDOWN:
+        switch (kbInfo.event.key) {
+          case "1":
+            cameraAnimate = true
+            targetPosition = new Vector3(-5, 0, 0)
+            break
 
-  scene.onPointerDown = (evt: IPointerEvent) => {
-    if (evt.inputIndex == PointerInput.MiddleClick) return
-
-    const ray = scene.createPickingRay(
-      scene.pointerX,
-      scene.pointerY,
-      Matrix.Identity(),
-      camera,
-      false
-    )
-    const hit = scene.pickWithRay(ray)
-
-    if (gizmoManager) gizmoManager.attachToMesh(null)
-    const picked = hit?.pickedMesh
-
-    if (picked) {
-      gizmoManager.attachToMesh(picked)
+          case "3":
+            cameraAnimate = true
+            targetPosition = new Vector3(5, 0, 0)
+            break
+          case "7":
+            cameraAnimate = true
+            targetPosition = new Vector3(0, 5, 0)
+            break
+        }
+        break
     }
-  }
+  })
 }
 
 /**
@@ -94,8 +98,24 @@ const onEditorReady = (scene: Scene, gizmoManager: GizmoManager) => {
  * シーンのレンダー毎に実行
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const onEditorRendered = (_scene: Scene) => {
-  // do nothing.
+const onEditorRendered = (_scene: Scene, engine: Engine) => {
+  const deltaTime = engine.getDeltaTime() / 1000
+
+  // targetPositionが変更されたときにアニメーションして遷移
+  if (cameraAnimate) {
+    if (Vector3.DistanceSquared(currentPosition, targetPosition) <= 0.0001) {
+      currentPosition = targetPosition
+      camera.position = currentPosition
+      cameraAnimate = false
+    } else {
+      currentPosition = Vector3.Lerp(
+        currentPosition,
+        targetPosition,
+        deltaTime * 4.0
+      )
+      camera.position = currentPosition
+    }
+  }
 }
 
 export { onEditorReady, onEditorRendered }

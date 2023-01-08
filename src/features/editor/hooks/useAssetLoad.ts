@@ -16,7 +16,7 @@ const useAssetLoad = () => {
     if (type == undefined) {
       console.warn("対応していない形式のファイルです", file.name)
       return
-    } else if (!["glb", "gltf", "obj", "stl", "fbx"].includes(type)) {
+    } else if (!["glb", "gltf", "obj", "stl", "babylon"].includes(type)) {
       console.warn("対応していない形式のファイルです", file.name)
       return
     }

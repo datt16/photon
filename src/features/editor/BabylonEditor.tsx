@@ -4,10 +4,19 @@ import {
   SceneLoader,
   GizmoManager,
   Nullable,
+  ArcRotateCamera,
 } from "@babylonjs/core"
 import "@babylonjs/loaders/glTF"
 import "@babylonjs/loaders/OBJ"
-import { VStack, Text, HStack } from "@chakra-ui/react"
+import {
+  VStack,
+  Text,
+  HStack,
+  ButtonGroup,
+  Button,
+  StackDivider,
+  Icon,
+} from "@chakra-ui/react"
 import { AddIcon } from "@chakra-ui/icons"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
@@ -21,8 +30,25 @@ import getMeshData from "./babylonLogic/GetMeshData"
 import { SceneMeshData } from "photon-babylon"
 import { onEditorRendered, onEditorReady } from "./babylonLogic/Common"
 import Inspector from "./components/layouts/inspector/Inspector"
+import { pickModeState } from "../../globalStates/atoms/selectModeState"
+import { SceneObservable } from "./babylonLogic/SceneObservables"
+import { useAnnotateStore } from "../../libs/AnnotateStore"
+import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
+import { useEditorStore } from "../../libs/EditorStore"
+import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
+import useExport from "./hooks/useExport"
+import { MdSaveAlt } from "react-icons/md"
 
 const BabylonEditor = () => {
+  const { annotations, isEditing } = useAnnotateStore()
+  const {
+    currentPickedPoint,
+    setPoint,
+    setPointWindow,
+    setPointerMeshUid,
+    pointerMeshUid,
+  } = useEditorStore()
+
   // EditorScene eventListener
   const onRender = onEditorRendered
   const onSceneReady = onEditorReady
@@ -40,6 +66,8 @@ const BabylonEditor = () => {
   // 3D scene state
   const [gizmoManager, setGizmoManager] = useState<GizmoManager>()
   const [meshList, setMeshList] = useRecoilState(meshListState)
+  const [pickMode, setPickMode] = useRecoilState(pickModeState)
+  const [isSceneReady, setIsSceneReady] = useState(false)
 
   // Babylon Engine & Scene variable
   const engine = useMemo((): Engine | undefined => {
@@ -64,7 +92,7 @@ const BabylonEditor = () => {
   useEffect(() => {
     if (engine && scene) {
       engine.runRenderLoop(() => {
-        if (typeof onRender === "function") onRender(scene)
+        if (typeof onRender === "function") onRender(scene, engine)
         scene.render()
       })
 
@@ -90,10 +118,13 @@ const BabylonEditor = () => {
         })
       })
       onSceneReady(scene, _gizmoManager)
+      setIsSceneReady(true)
       return () => {
         if (window) {
           window.removeEventListener("resize", resize)
         }
+        scene.dispose()
+        setIsSceneReady(false)
       }
     }
   }, [renderCanvas, scene, engine, onRender, onSceneReady, setMeshList])
@@ -112,6 +143,52 @@ const BabylonEditor = () => {
     }
   }, [assetUrl, assetType, scene])
 
+  // Export feature logic
+  const { exportAnnotations, exportSceneAsBabylon, exportSceneAsGltf } =
+    useExport(scene)
+
+  // EditorScene Annotation feature logic
+  const [isAnnotationEditorOpen, setIsAnnotationEditorOpen] = useState(false)
+
+  const sceneObservable = useMemo<SceneObservable | undefined>(() => {
+    if (scene && gizmoManager && isSceneReady) {
+      return new SceneObservable(scene, gizmoManager, (args) => {
+        setPointerMeshUid(args.pointObjectUid)
+        // 注釈入力欄出す
+        setPoint(args.pickedPointOnScene)
+        setPointWindow(args.pickedPointOnEditor)
+        setIsAnnotationEditorOpen(true)
+      })
+    } else undefined
+  }, [
+    gizmoManager,
+    isSceneReady,
+    scene,
+    setPoint,
+    setPointWindow,
+    setPointerMeshUid,
+  ])
+
+  // EditorScene Observable : 色々なイベントの機能が実装されてる
+  useEffect(() => {
+    if (sceneObservable && scene && gizmoManager) {
+      if (pickMode == "gizmo") {
+        scene.onPointerObservable.removeCallback(
+          sceneObservable.onAddAnnotateObserver
+        )
+        scene.onPointerObservable.add(sceneObservable.onPickMeshObserver)
+      } else if (pickMode == "annotate") {
+        scene.onPointerObservable.removeCallback(
+          sceneObservable.onPickMeshObserver
+        )
+        scene.onPointerObservable.add(sceneObservable.onAddAnnotateObserver)
+      }
+    }
+  }, [gizmoManager, pickMode, scene, sceneObservable])
+
+  useEffect(() => {
+    console.log(pointerMeshUid)
+  }, [pointerMeshUid])
   return (
     <Div100vh
       style={{
@@ -119,38 +196,132 @@ const BabylonEditor = () => {
       }}
     >
       <FloatingControlPanel>
-        <VStack alignItems="start" maxH="90vh">
-          <HStack mt={2} mx={4}>
-            <Text>Inspector</Text>
-            <InputFileButton
-              name="FILE"
-              labelText="インポート"
-              onChange={(e) => {
-                handleSingle3dFileInput(e)
-                e.target.value = ""
-              }}
-              size="xs"
-            >
-              <AddIcon />
-            </InputFileButton>
-          </HStack>
+        <HStack>
+          <VStack
+            alignItems="start"
+            maxH="90vh"
+            border={"solid 1px"}
+            borderColor="white"
+            borderRadius="lg"
+          >
+            <HStack mt={2} mx={4}>
+              <Text>Inspector</Text>
+              <InputFileButton
+                name="FILE"
+                labelText="インポート"
+                onChange={(e) => {
+                  handleSingle3dFileInput(e)
+                  e.target.value = ""
+                }}
+                size="xs"
+              >
+                <AddIcon />
+              </InputFileButton>
+            </HStack>
 
-          <Inspector
-            meshList={meshList}
-            scene={scene}
-            onClickMeshItem={(meshItem) => {
-              const id = meshItem.uid
-              const target = scene?.getMeshByUniqueId(id)
-              if (target) gizmoManager?.attachToMesh(target)
-            }}
-            onClickNodeItem={(nodeItem) => {
-              const id = nodeItem.uid
-              const target = scene?.getTransformNodeByUniqueId(id)
-              if (target) gizmoManager?.attachToNode(target)
-            }}
-          />
-        </VStack>
+            <Inspector
+              meshList={meshList}
+              scene={scene}
+              onClickMeshItem={(meshItem) => {
+                const id = meshItem.uid
+                const target = scene?.getMeshByUniqueId(id)
+                if (target) gizmoManager?.attachToMesh(target)
+              }}
+              onClickNodeItem={(nodeItem) => {
+                const id = nodeItem.uid
+                const target = scene?.getTransformNodeByUniqueId(id)
+                if (target) gizmoManager?.attachToNode(target)
+              }}
+            />
+          </VStack>
+
+          <VStack>
+            <ButtonGroup>
+              <Button
+                colorScheme={pickMode == "gizmo" ? "blue" : "gray"}
+                onClick={() => setPickMode("gizmo")}
+              >
+                Move
+              </Button>
+              <Button
+                colorScheme={pickMode == "annotate" ? "blue" : "gray"}
+                onClick={() => setPickMode("annotate")}
+              >
+                Memo
+              </Button>
+            </ButtonGroup>
+          </VStack>
+        </HStack>
       </FloatingControlPanel>
+      <FloatingControlPanel position="right">
+        <HStack>
+          <VStack alignItems="start" maxW="300px" spacing={0}>
+            <HStack py={2} px={4}>
+              <Text>注釈</Text>
+              <Button
+                size={"sm"}
+                onClick={() => {
+                  exportAnnotations()
+                }}
+              >
+                <Icon size={"sm"} as={MdSaveAlt} />
+              </Button>
+              <Button
+                size={"sm"}
+                onClick={() => {
+                  exportSceneAsBabylon()
+                }}
+              >
+                <Icon size={"sm"} as={MdSaveAlt} />
+              </Button>
+              <Button
+                size={"sm"}
+                onClick={() => {
+                  exportSceneAsGltf()
+                }}
+              >
+                GLTF
+              </Button>
+            </HStack>
+
+            <VStack
+              maxH="90vh"
+              overflow={"auto"}
+              overflowX={"hidden"}
+              spacing={0}
+              divider={<StackDivider />}
+            >
+              {annotations.map((v, i) => (
+                <AnnotationItem
+                  key={v.uniqueId + i}
+                  index={v.index}
+                  title={v.title}
+                  user={v.userName}
+                  description={v.description}
+                  onClick={() => {
+                    const camera = scene?.cameras[0] as ArcRotateCamera
+                    if (v.targetPosition && camera?.position) {
+                      camera.position = v.targetPosition
+                    }
+                    camera.radius += 4
+                  }}
+                />
+              ))}
+            </VStack>
+          </VStack>
+        </HStack>
+      </FloatingControlPanel>
+
+      <AnnotationEditor
+        isEditorOpen={isAnnotationEditorOpen}
+        setIsEditorOpen={setIsAnnotationEditorOpen}
+        onCanceled={() => {
+          console.log("canceled", pointerMeshUid)
+          if (pointerMeshUid)
+            scene?.getMeshByUniqueId(pointerMeshUid)?.dispose()
+        }}
+      />
+
       <canvas
         ref={(view) => {
           renderCanvas.current = view
@@ -161,7 +332,22 @@ const BabylonEditor = () => {
           height: "100%",
           outline: "none",
         }}
+        onClick={() => {
+          if (!isEditing) setIsAnnotationEditorOpen(false)
+        }}
       />
+
+      <HStack
+        position="fixed"
+        width={"100vw"}
+        bottom={0}
+        zIndex={100}
+        background={"Background"}
+      >
+        <Text fontSize={"xs"}>
+          {currentPickedPoint?.toString() ?? "何も選択されていません。"}
+        </Text>
+      </HStack>
     </Div100vh>
   )
 }

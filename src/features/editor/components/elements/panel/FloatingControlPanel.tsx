@@ -1,23 +1,25 @@
-import { ScaleFade, VStack } from "@chakra-ui/react"
+import { Box, ScaleFade } from "@chakra-ui/react"
 import { ReactNode, useState } from "react"
 const FloatingControlPanel = ({
   children,
+  position = "left",
 }: {
   children: ReactNode[] | ReactNode
+  position?: "left" | "right"
 }) => {
   const [isPanelOpen] = useState(true)
 
   return (
     <ScaleFade initialScale={0.9} in={isPanelOpen}>
-      <VStack
-        mt={"1rem"}
-        ml={"1rem"}
+      <Box
+        my={"1rem"}
+        mx={"1rem"}
         alignItems={"start"}
         display="flex"
         borderRadius="lg"
-        border={"1px solid"}
-        borderColor={"whiteAlpha.400"}
         position="fixed"
+        right={position == "right" ? 0 : "auto"}
+        left={position == "left" ? 0 : "auto"}
         zIndex={100}
         shadow="md"
         rounded="md"
@@ -25,7 +27,7 @@ const FloatingControlPanel = ({
         overflow={"inherit"}
       >
         <div>{children}</div>
-      </VStack>
+      </Box>
     </ScaleFade>
   )
 }
