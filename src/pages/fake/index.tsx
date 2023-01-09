@@ -1,35 +1,22 @@
 import { Button, Text } from "@chakra-ui/react"
-import { ChangeEventHandler, useState } from "react"
+import { ChangeEventHandler, useEffect, useState } from "react"
+import Account from "../../features/auth/Account"
+import Auth from "../../features/auth/Auth"
 
 import useFileHandler from "../../features/experimental/hooks/useFileHandler"
-
-const useFile = () => {
-  const [fileURL, setFileURL] = useState<string>()
-  const [fileName, setFileName] = useState<string>("")
-  const handleFiles: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const files = event.currentTarget.files
-    if (!files || files?.length === 0) return
-    const url = window.URL.createObjectURL(files[0])
-    setFileURL(url)
-    setFileName(files[0].name)
-  }
-  return { handleFiles, fileURL, fileName }
-}
+import { supabase } from "../../utils/supabaseClient"
 
 const Page = () => {
-  const { handleFiles } = useFile()
-  const { readFile, file } = useFileHandler()
+  const [session, setSession] = useState(null)
+  useEffect(() => {
+    setSession(supabase.auth.getSession())
 
-  return (
-    <>
-      <Text fontSize={"lg"}>File Pick Test</Text>
-      <input type={"file"} onChange={handleFiles} />
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+  }, [])
 
-      <Button onClick={readFile}>readFile</Button>
-
-      <p>{file}</p>
-    </>
-  )
+  return <>{session ? <Auth /> : <Account session={session} />}</>
 }
 
 export default Page
