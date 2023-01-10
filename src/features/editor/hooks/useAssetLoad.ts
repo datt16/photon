@@ -25,7 +25,7 @@ const useAssetLoad = () => {
     setAssetType(`.${type}`)
   }
 
-  return { handleSingle3dFileInput, assetUrl, assetType }
+  return { handleSingle3dFileInput, assetUrl, assetType, setAssetUrl }
 }
 
 export default useAssetLoad
