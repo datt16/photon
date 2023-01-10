@@ -39,6 +39,7 @@ import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
 import useExport from "./hooks/useExport"
 import { MdSaveAlt } from "react-icons/md"
 import useCloud from "./hooks/useCloud"
+import { BsCloud } from "react-icons/bs"
 
 const BabylonEditor = () => {
   const { annotations, isEditing } = useAnnotateStore()
@@ -187,7 +188,7 @@ const BabylonEditor = () => {
     }
   }, [gizmoManager, pickMode, scene, sceneObservable])
 
-  const { upload } = useCloud(scene)
+  const { upload, download } = useCloud(scene)
 
   return (
     <Div100vh
@@ -217,6 +218,12 @@ const BabylonEditor = () => {
               >
                 <AddIcon />
               </InputFileButton>
+              <Button
+                size="xs"
+                onClick={() => download("dea75da3-409d-44fc-8466-bf279c976c83")}
+              >
+                <Icon as={() => <BsCloud />}></Icon>
+              </Button>
             </HStack>
 
             <Inspector

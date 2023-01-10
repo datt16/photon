@@ -64,23 +64,44 @@ const useCloud = (scene?: Scene) => {
     }
   }
 
-  const download = async (onComplete?: () => void) => {
+  const download = async (sceneId: string) => {
+    if (!scene) {
+      alert("シーンが初期化されていないため、操作を行えません。")
+      return
+    }
+
     if (!uid) {
       alert("ログインしていないため、操作が行えません。")
       return
     }
 
-    // TODO: シーンファイル名称の状態管理
-    const sceneName = ""
-
-    client.storage
+    // シーン情報の行取得
+    const { data: sceneData, error: rowFetchError } = await client
       .from("scenes")
-      .download(`${uid}/${sceneName}`)
-      .then(() => {
-        if (onComplete) onComplete()
+      .select("*")
+      .match({
+        id: sceneId,
       })
-      .catch((reason) => alert(reason))
+      .single()
+    if (!sceneData?.scene_file_url) return
+
+    if (rowFetchError) console.error(rowFetchError)
+
+    // シーンファイル本体の取得
+    const { data: sceneFile, error: fileFetchError } = await client.storage
+      .from("scenes")
+      .download(sceneData?.scene_file_url)
+
+    if (!sceneFile) return
+    if (fileFetchError) console.error(fileFetchError)
+
+    // TODO: ダウンロードしたファイルのハンドリング
+    // - sceneDataはZustandのStoreへ転送
+    // - sceneFileはsceneのAppendAsyncで読み込み
+    console.log(sceneData, sceneFile.type)
+    alert("Data Fetched")
   }
+
   return { upload, download }
 }
 
