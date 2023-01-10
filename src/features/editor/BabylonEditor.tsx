@@ -49,6 +49,7 @@ const BabylonEditor = () => {
     setPointWindow,
     setPointerMeshUid,
     pointerMeshUid,
+    remoteSceneId,
   } = useEditorStore()
 
   // EditorScene eventListener
@@ -220,7 +221,11 @@ const BabylonEditor = () => {
               </InputFileButton>
               <Button
                 size="xs"
-                onClick={() => download("dea75da3-409d-44fc-8466-bf279c976c83")}
+                onClick={() =>
+                  download(
+                    "dea75da3-409d-44fc-8466-bf279c976c83"
+                  )
+                }
               >
                 <Icon as={() => <BsCloud />}></Icon>
               </Button>

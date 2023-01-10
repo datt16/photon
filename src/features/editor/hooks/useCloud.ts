@@ -16,8 +16,15 @@ const Scene2Babylon = (scene: Scene, fileName: string): File => {
 const useCloud = (scene?: Scene) => {
   const client = useSupabaseClient<Database>()
   const { uid } = useUserStore()
-  const { annotations } = useAnnotateStore()
-  const { setRemoteData } = useEditorStore()
+  const { annotations, setAll: loadAnnotations } = useAnnotateStore()
+  const {
+    setRemoteData: loadSceneOptions,
+    sceneName,
+    remoteSceneId,
+    ownerId,
+    cloudFilePath,
+    cloudFileExists,
+  } = useEditorStore()
 
   const upload = async () => {
     if (!scene) {
@@ -30,40 +37,64 @@ const useCloud = (scene?: Scene) => {
       return
     }
 
-    // TODO: シーンファイル名称の状態管理
-    const sceneName = "untitled-1"
     const fileName = createHash("sha1").update(sceneName).digest("hex")
-
     const file = Scene2Babylon(scene, fileName)
 
-    // TODO: パスが重複しないようにする
-    // TODO: 既にファイルがあった場合にupload()ではなくupdate()を呼ぶようにする
-    const { data: storageData, error: storageUploadError } =
-      await client.storage
+    if (cloudFileExists) {
+      // ファイルが既にアップロードされている場合
+      const { data: storageData, error: storageUploadError } =
+        await client.storage
+          .from("scenes")
+          .update(cloudFilePath as string, file)
+
+      if (storageUploadError) {
+        console.error(storageUploadError.message)
+        return
+      }
+
+      const { error: insertError } = await client
         .from("scenes")
-        .upload(`${uid}/${sceneName}/${file.name}`, file)
-
-    if (storageUploadError) {
-      console.error(storageUploadError.message)
-      return
-    }
-
-    const { error: insertError } = await client
-      .from("scenes")
-      .insert([
-        {
-          owner_id: uid,
+        .update({
+          owner_id: ownerId,
           name: sceneName,
           annotation_dataset: JSON.stringify(annotations),
           scene_file_url: storageData.path,
-        },
-      ])
-      .single()
+        })
+        .eq("id", remoteSceneId)
 
-    if (storageUploadError) {
-      console.error(insertError?.message)
-      return
+      if (storageUploadError) {
+        console.error(insertError?.message)
+        return
+      }
+    } else {
+      const { data: storageData, error: storageUploadError } =
+        await client.storage
+          .from("scenes")
+          .upload(`${uid}/${sceneName}/${file.name}`, file)
+
+      if (storageUploadError) {
+        console.error(storageUploadError.message)
+        return
+      }
+
+      const { error: insertError } = await client
+        .from("scenes")
+        .insert([
+          {
+            owner_id: uid,
+            name: sceneName,
+            annotation_dataset: JSON.stringify(annotations),
+            scene_file_url: storageData.path,
+          },
+        ])
+        .single()
+
+      if (storageUploadError) {
+        console.error(insertError?.message)
+        return
+      }
     }
+    alert("保存しました")
   }
 
   const download = async (sceneId: string) => {
@@ -97,18 +128,24 @@ const useCloud = (scene?: Scene) => {
     if (!sceneFile) return
     if (fileFetchError) console.error(fileFetchError)
 
-    setRemoteData({
+    loadSceneOptions({
       sceneName: sceneData.name,
       remoteSceneId: sceneData.id,
       ownerId: sceneData.owner_id,
       cloudFilePath: sceneData.scene_file_url,
     })
 
+    loadAnnotations(JSON.parse(sceneData.annotation_dataset as string))
+
+    // FIXME: .babylonファイルが上手く読み込めない
     SceneLoader.Load(
       URL.createObjectURL(sceneFile),
       undefined,
       scene.getEngine(),
-      undefined
+      undefined,
+      undefined,
+      undefined,
+      "." + sceneData.scene_file_url.split(".").pop()
     )
     alert("Data Fetched")
   }
