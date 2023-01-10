@@ -38,6 +38,7 @@ import { useEditorStore } from "../../libs/EditorStore"
 import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
 import useExport from "./hooks/useExport"
 import { MdSaveAlt } from "react-icons/md"
+import useCloud from "./hooks/useCloud"
 
 const BabylonEditor = () => {
   const { annotations, isEditing } = useAnnotateStore()
@@ -186,9 +187,8 @@ const BabylonEditor = () => {
     }
   }, [gizmoManager, pickMode, scene, sceneObservable])
 
-  useEffect(() => {
-    console.log(pointerMeshUid)
-  }, [pointerMeshUid])
+  const { upload } = useCloud(scene)
+
   return (
     <Div100vh
       style={{
@@ -281,6 +281,14 @@ const BabylonEditor = () => {
                 }}
               >
                 GLTF
+              </Button>
+              <Button
+                size={"sm"}
+                onClick={() => {
+                  upload()
+                }}
+              >
+                CLOUD
               </Button>
             </HStack>
 
