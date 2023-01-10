@@ -8,6 +8,7 @@ import Head from "next/head"
 import { useState } from "react"
 import { Database } from "../types/db/schema"
 import { useUserStore } from "../libs/UserStore"
+import useProfile from "../features/auth/hooks/useProfile"
 
 const colors = {
   brand: {
@@ -29,11 +30,12 @@ function MyApp({
     createBrowserSupabaseClient<Database>()
   )
 
-  const { handleLogin, handleLogout } = useUserStore()
+  const { handleLogout } = useUserStore()
+  const { getProfile } = useProfile(supabaseClient)
 
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     if (session) {
-      handleLogin(session.user.id)
+      getProfile(session.user.id)
     } else {
       handleLogout()
     }

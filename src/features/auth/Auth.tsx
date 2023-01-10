@@ -12,7 +12,8 @@ const Auth = () => {
       setLoading(true)
       const { error } = await client.auth.signInWithOtp({ email })
       if (error) throw error
-      alert("Check your email for the login link!")
+      alert("マジックリンクを送付しました！メールボックスを確認してください！")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       alert(error.err_description || error.message)
     } finally {
