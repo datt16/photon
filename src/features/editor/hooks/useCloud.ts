@@ -1,4 +1,5 @@
 import { Scene, SceneLoader, SceneSerializer } from "@babylonjs/core"
+import { GLTF2Export } from "@babylonjs/serializers"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { createHash } from "crypto"
 import { useAnnotateStore } from "../../../libs/AnnotateStore"
@@ -7,10 +8,21 @@ import { useUserStore } from "../../../libs/UserStore"
 import { Database } from "../../../types/db/schema"
 
 // TODO: 切り出し
-const Scene2Babylon = (scene: Scene, fileName: string): File => {
+const scene2Babylon = (scene: Scene, fileName: string): File => {
   const serializedScene = SceneSerializer.Serialize(scene)
   const json = JSON.stringify(serializedScene)
   return new File([json], `${fileName}.babylon`, { type: "octet/stream" })
+}
+
+const scene2glb = async (scene: Scene, fileName: string) => {
+  const data = await GLTF2Export.GLBAsync(scene, fileName)
+  return new File([data.glTFFiles[`${fileName}.glb`]], `${fileName}.glb`, {
+    type: "model/gltf-binary",
+  })
+}
+
+const disposeAllObjects = (scene: Scene) => {
+  scene.meshes.forEach((v) => v.dispose())
 }
 
 const useCloud = (scene?: Scene) => {
@@ -38,7 +50,9 @@ const useCloud = (scene?: Scene) => {
     }
 
     const fileName = createHash("sha1").update(sceneName).digest("hex")
-    const file = Scene2Babylon(scene, fileName)
+    // const file = scene2Babylon(scene, fileName)
+
+    const file = await scene2glb(scene, fileName)
 
     if (cloudFileExists) {
       // ファイルが既にアップロードされている場合
@@ -77,7 +91,7 @@ const useCloud = (scene?: Scene) => {
         return
       }
 
-      const { error: insertError } = await client
+      const { data, error: insertError } = await client
         .from("scenes")
         .insert([
           {
@@ -87,11 +101,20 @@ const useCloud = (scene?: Scene) => {
             scene_file_url: storageData.path,
           },
         ])
-        .single()
+        .select()
 
       if (storageUploadError) {
         console.error(insertError?.message)
         return
+      }
+
+      if (data) {
+        loadSceneOptions({
+          sceneName: data[0].name,
+          remoteSceneId: data[0].id,
+          ownerId: data[0].owner_id,
+          cloudFilePath: data[0].scene_file_url as string,
+        })
       }
     }
     alert("保存しました")
@@ -138,12 +161,14 @@ const useCloud = (scene?: Scene) => {
     loadAnnotations(JSON.parse(sceneData.annotation_dataset as string))
 
     // FIXME: .babylonファイルが上手く読み込めない
-    SceneLoader.Load(
+    console.log("debug", URL.createObjectURL(sceneFile))
+
+    disposeAllObjects(scene)
+
+    await SceneLoader.AppendAsync(
       URL.createObjectURL(sceneFile),
       undefined,
-      scene.getEngine(),
-      undefined,
-      undefined,
+      scene,
       undefined,
       "." + sceneData.scene_file_url.split(".").pop()
     )

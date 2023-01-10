@@ -84,6 +84,7 @@ const BabylonEditor = () => {
     }
     return undefined
   }, [adaptToDeviceRatio, antialias, canvasReady, engineOptions])
+
   const scene = useMemo((): Scene | undefined => {
     if (engine) {
       return new Scene(engine, sceneOptions)
@@ -136,10 +137,22 @@ const BabylonEditor = () => {
   const { handleSingle3dFileInput, assetUrl, assetType } = useAssetLoad()
   useEffect(() => {
     const Load3dData = async (scene: Scene, url: string, type: string) => {
-      await SceneLoader.AppendAsync(url, undefined, scene, undefined, type)
+      // await SceneLoader.AppendAsync(url, undefined, scene, undefined, type)
+      SceneLoader.Load(
+        url,
+        undefined,
+        scene.getEngine(),
+        undefined,
+        undefined,
+        (error) => {
+          console.warn(error)
+        },
+        type
+      )
     }
     if (assetUrl == "") return
     if (scene) {
+      console.log("will load", assetUrl)
       Load3dData(scene, assetUrl, assetType).then(() => {
         // do nothing | ファイル読み込み後の振る舞い
       })
@@ -221,11 +234,7 @@ const BabylonEditor = () => {
               </InputFileButton>
               <Button
                 size="xs"
-                onClick={() =>
-                  download(
-                    "dea75da3-409d-44fc-8466-bf279c976c83"
-                  )
-                }
+                onClick={() => download("c8e83149-2e74-44cc-b7ec-6e2175c6e058")}
               >
                 <Icon as={() => <BsCloud />}></Icon>
               </Button>
