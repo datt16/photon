@@ -7,6 +7,7 @@ import { RecoilRoot } from "recoil"
 import Head from "next/head"
 import { useState } from "react"
 import { Database } from "../types/db/schema"
+import { useUserStore } from "../libs/UserStore"
 
 const colors = {
   brand: {
@@ -27,6 +28,16 @@ function MyApp({
   const [supabaseClient] = useState(() =>
     createBrowserSupabaseClient<Database>()
   )
+
+  const { handleLogin, handleLogout } = useUserStore()
+
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    if (session) {
+      handleLogin(session.user.id)
+    } else {
+      handleLogout()
+    }
+  })
 
   return (
     <div>
