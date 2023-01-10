@@ -1,7 +1,8 @@
-import { Scene, SceneSerializer } from "@babylonjs/core"
+import { Scene, SceneLoader, SceneSerializer } from "@babylonjs/core"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { createHash } from "crypto"
 import { useAnnotateStore } from "../../../libs/AnnotateStore"
+import { useEditorStore } from "../../../libs/EditorStore"
 import { useUserStore } from "../../../libs/UserStore"
 import { Database } from "../../../types/db/schema"
 
@@ -16,6 +17,7 @@ const useCloud = (scene?: Scene) => {
   const client = useSupabaseClient<Database>()
   const { uid } = useUserStore()
   const { annotations } = useAnnotateStore()
+  const { setRemoteData } = useEditorStore()
 
   const upload = async () => {
     if (!scene) {
@@ -95,10 +97,19 @@ const useCloud = (scene?: Scene) => {
     if (!sceneFile) return
     if (fileFetchError) console.error(fileFetchError)
 
-    // TODO: ダウンロードしたファイルのハンドリング
-    // - sceneDataはZustandのStoreへ転送
-    // - sceneFileはsceneのAppendAsyncで読み込み
-    console.log(sceneData, sceneFile.type)
+    setRemoteData({
+      sceneName: sceneData.name,
+      remoteSceneId: sceneData.id,
+      ownerId: sceneData.owner_id,
+      cloudFilePath: sceneData.scene_file_url,
+    })
+
+    SceneLoader.Load(
+      URL.createObjectURL(sceneFile),
+      undefined,
+      scene.getEngine(),
+      undefined
+    )
     alert("Data Fetched")
   }
 
