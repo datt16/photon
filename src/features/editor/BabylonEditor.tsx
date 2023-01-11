@@ -49,7 +49,6 @@ const BabylonEditor = () => {
     setPointWindow,
     setPointerMeshUid,
     pointerMeshUid,
-    remoteSceneId,
   } = useEditorStore()
 
   // EditorScene eventListener
@@ -152,7 +151,6 @@ const BabylonEditor = () => {
     }
     if (assetUrl == "") return
     if (scene) {
-      console.log("will load", assetUrl)
       Load3dData(scene, assetUrl, assetType).then(() => {
         // do nothing | ファイル読み込み後の振る舞い
       })
@@ -345,7 +343,6 @@ const BabylonEditor = () => {
         isEditorOpen={isAnnotationEditorOpen}
         setIsEditorOpen={setIsAnnotationEditorOpen}
         onCanceled={() => {
-          console.log("canceled", pointerMeshUid)
           if (pointerMeshUid)
             scene?.getMeshByUniqueId(pointerMeshUid)?.dispose()
         }}

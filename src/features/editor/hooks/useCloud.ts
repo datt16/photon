@@ -8,6 +8,7 @@ import { useUserStore } from "../../../libs/UserStore"
 import { Database } from "../../../types/db/schema"
 
 // TODO: 切り出し
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const scene2Babylon = (scene: Scene, fileName: string): File => {
   const serializedScene = SceneSerializer.Serialize(scene)
   const json = JSON.stringify(serializedScene)
@@ -159,9 +160,6 @@ const useCloud = (scene?: Scene) => {
     })
 
     loadAnnotations(JSON.parse(sceneData.annotation_dataset as string))
-
-    // FIXME: .babylonファイルが上手く読み込めない
-    console.log("debug", URL.createObjectURL(sceneFile))
 
     disposeAllObjects(scene)
 

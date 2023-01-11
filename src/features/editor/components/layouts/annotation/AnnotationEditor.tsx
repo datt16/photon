@@ -38,7 +38,6 @@ const AnnotationEditor = (props: {
   useOutsideClick({
     ref: dialogRootRef,
     handler: () => {
-      console.log("Out side clicked")
       setIsEditorOpen(false)
     },
   })

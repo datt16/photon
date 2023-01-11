@@ -27,12 +27,6 @@ const useFile = () => {
   const config = useMemo(() => {
     return {
       headers: { "Content-Type": "multipart/form-data" },
-      onUploadProgress: (event: AxiosProgressEvent) => {
-        console.log(
-          `Current progress:`,
-          event.total ? Math.round((event.loaded * 100) / event.total) : null
-        )
-      },
     }
   }, [])
 
