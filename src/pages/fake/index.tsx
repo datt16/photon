@@ -4,9 +4,8 @@ import Auth from "../../features/auth/Auth"
 
 const Page = () => {
   const session = useSession()
-  console.log("session-user", session)
 
-  return <>{!session ? <Auth /> : <Account session={session} />}</>
+  return <>{!session ? <Auth /> : <Account />}</>
 }
 
 export default Page
