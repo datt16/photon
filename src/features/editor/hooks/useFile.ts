@@ -1,4 +1,4 @@
-import axios, { AxiosProgressEvent } from "axios"
+import axios from "axios"
 import { ChangeEventHandler, useEffect, useMemo, useState } from "react"
 import { useSetRecoilState } from "recoil"
 import { photonConst } from "../../../const/const"
