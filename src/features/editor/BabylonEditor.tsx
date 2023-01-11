@@ -38,6 +38,8 @@ import { useEditorStore } from "../../libs/EditorStore"
 import AnnotationEditor from "./components/layouts/annotation/AnnotationEditor"
 import useExport from "./hooks/useExport"
 import { MdSaveAlt } from "react-icons/md"
+import useCloud from "./hooks/useCloud"
+import { BsCloud } from "react-icons/bs"
 
 const BabylonEditor = () => {
   const { annotations, isEditing } = useAnnotateStore()
@@ -81,6 +83,7 @@ const BabylonEditor = () => {
     }
     return undefined
   }, [adaptToDeviceRatio, antialias, canvasReady, engineOptions])
+
   const scene = useMemo((): Scene | undefined => {
     if (engine) {
       return new Scene(engine, sceneOptions)
@@ -133,7 +136,18 @@ const BabylonEditor = () => {
   const { handleSingle3dFileInput, assetUrl, assetType } = useAssetLoad()
   useEffect(() => {
     const Load3dData = async (scene: Scene, url: string, type: string) => {
-      await SceneLoader.AppendAsync(url, undefined, scene, undefined, type)
+      // await SceneLoader.AppendAsync(url, undefined, scene, undefined, type)
+      SceneLoader.Load(
+        url,
+        undefined,
+        scene.getEngine(),
+        undefined,
+        undefined,
+        (error) => {
+          console.warn(error)
+        },
+        type
+      )
     }
     if (assetUrl == "") return
     if (scene) {
@@ -186,9 +200,8 @@ const BabylonEditor = () => {
     }
   }, [gizmoManager, pickMode, scene, sceneObservable])
 
-  useEffect(() => {
-    console.log(pointerMeshUid)
-  }, [pointerMeshUid])
+  const { upload, download } = useCloud(scene)
+
   return (
     <Div100vh
       style={{
@@ -217,6 +230,12 @@ const BabylonEditor = () => {
               >
                 <AddIcon />
               </InputFileButton>
+              <Button
+                size="xs"
+                onClick={() => download("c8e83149-2e74-44cc-b7ec-6e2175c6e058")}
+              >
+                <Icon as={() => <BsCloud />}></Icon>
+              </Button>
             </HStack>
 
             <Inspector
@@ -282,6 +301,14 @@ const BabylonEditor = () => {
               >
                 GLTF
               </Button>
+              <Button
+                size={"sm"}
+                onClick={() => {
+                  upload()
+                }}
+              >
+                CLOUD
+              </Button>
             </HStack>
 
             <VStack
@@ -316,7 +343,6 @@ const BabylonEditor = () => {
         isEditorOpen={isAnnotationEditorOpen}
         setIsEditorOpen={setIsAnnotationEditorOpen}
         onCanceled={() => {
-          console.log("canceled", pointerMeshUid)
           if (pointerMeshUid)
             scene?.getMeshByUniqueId(pointerMeshUid)?.dispose()
         }}
