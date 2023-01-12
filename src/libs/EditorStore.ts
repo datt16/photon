@@ -1,10 +1,16 @@
 import { Vector3 } from "@babylonjs/core"
+import { SceneMeshData } from "photon-babylon"
 import create from "zustand"
 
 type State = {
+  // Editor State | エディタの状態情報
   currentPickedPoint?: Vector3
   currentPickedPointWindow: { x: number; y: number }
   pointerMeshUid?: number
+  meshList: SceneMeshData
+  pickMode: "gizmo" | "annotate"
+
+  // Editor SceneData State | シーン情報
   sceneName: string
   cloudFileExists: boolean
   remoteSceneId?: string
@@ -13,12 +19,14 @@ type State = {
 }
 
 type Actions = {
-  // use on 3d scene
+  // エディタの状態の操作
   setPoint: (current: Vector3) => void
   setPointWindow: (current: { x: number; y: number }) => void
   setPointerMeshUid: (uid: number) => void
+  setMeshList: (meshList: SceneMeshData) => void
+  setPickMode: (pickMode: "gizmo" | "annotate") => void
 
-  // other
+  // その他、リセットなど
   reset: () => void
   setRemoteData: (args: {
     sceneName: string
@@ -35,6 +43,8 @@ const initialState: State = {
   },
   sceneName: "untitled",
   cloudFileExists: false,
+  meshList: {},
+  pickMode: "gizmo",
 }
 
 export const useEditorStore = create<State & Actions>((set) => ({
@@ -46,4 +56,6 @@ export const useEditorStore = create<State & Actions>((set) => ({
   setRemoteData: (args) => {
     set({ ...args, cloudFileExists: true })
   },
+  setMeshList: (meshList) => set({ meshList }),
+  setPickMode: (pickMode) => set({ pickMode }),
 }))

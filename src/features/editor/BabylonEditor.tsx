@@ -20,17 +20,13 @@ import {
 import { AddIcon } from "@chakra-ui/icons"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Div100vh from "react-div-100vh"
-import { useRecoilState } from "recoil"
 import useAssetLoad from "./hooks/useAssetLoad"
-import { meshListState } from "../../globalStates/atoms/meshListState"
 
 import InputFileButton from "./components/elements/button/InputFIleButton"
 import FloatingControlPanel from "./components/elements/panel/FloatingControlPanel"
 import getMeshData from "./babylonLogic/GetMeshData"
-import { SceneMeshData } from "photon-babylon"
 import { onEditorRendered, onEditorReady } from "./babylonLogic/Common"
 import Inspector from "./components/layouts/inspector/Inspector"
-import { pickModeState } from "../../globalStates/atoms/selectModeState"
 import { SceneObservable } from "./babylonLogic/SceneObservables"
 import { useAnnotateStore } from "../../libs/AnnotateStore"
 import AnnotationItem from "./components/layouts/annotation/AnnotationItem"
@@ -67,8 +63,8 @@ const BabylonEditor = () => {
 
   // 3D scene state
   const [gizmoManager, setGizmoManager] = useState<GizmoManager>()
-  const [meshList, setMeshList] = useRecoilState(meshListState)
-  const [pickMode, setPickMode] = useRecoilState(pickModeState)
+  const { meshList, setMeshList } = useEditorStore()
+  const { pickMode, setPickMode } = useEditorStore()
   const [isSceneReady, setIsSceneReady] = useState(false)
 
   // Babylon Engine & Scene variable
@@ -111,14 +107,7 @@ const BabylonEditor = () => {
 
       scene.onNewMeshAddedObservable.add(() => {
         const meshes = scene.rootNodes
-        setMeshList((item) => {
-          const value = { ...item }
-          const meshData: SceneMeshData = getMeshData(meshes)
-          Object.keys(meshData).forEach((key) => {
-            value[key] = meshData[key]
-          })
-          return value
-        })
+        setMeshList(getMeshData(meshes))
       })
       onSceneReady(scene, _gizmoManager)
       setIsSceneReady(true)
