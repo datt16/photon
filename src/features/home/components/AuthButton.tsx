@@ -1,80 +1,77 @@
 import {
+  Avatar,
   Button,
+  Card,
+  CardBody,
   ChakraComponent,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
+  HStack,
   useDisclosure,
   Text,
-  ModalFooter,
-  theme,
+  Spacer,
+  Stack,
+  Heading,
+  Tooltip,
 } from "@chakra-ui/react"
-import { useSupabaseClient } from "@supabase/auth-helpers-react"
-import { ThemeSupa, Auth } from "@supabase/auth-ui-react"
+import { useSupabaseClient, useSession } from "@supabase/auth-helpers-react"
+import LoginModal from "../../../components/modal/LoginModal"
+import { useUserStore } from "../../../libs/UserStore"
 
 type DivComponent = ChakraComponent<"div", object>
 
 const AuthButton = (() => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { uid, userName, avatarImageUrl } = useUserStore()
   const supabase = useSupabaseClient()
+  const session = useSession()
+
   return (
     <>
-      <Button onClick={onOpen} width={"100%"} size={"lg"}>
-        ログイン
-      </Button>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>ログイン</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Auth
-              supabaseClient={supabase}
-              appearance={{
-                theme: ThemeSupa,
-                variables: {
-                  default: {},
-                },
-              }}
-              localization={{
-                variables: {
-                  sign_in: {
-                    email_label: "メールアドレス",
-                    email_input_placeholder: "メールアドレスを入力",
-                    password_label: "パスワード",
-                    password_input_placeholder: "パスワードを入力",
-                    button_label: "ログイン",
-                    link_text: "既にアカウントをお持ちですか？",
-                  },
-                  sign_up: {
-                    email_label: "メールアドレス",
-                    email_input_placeholder: "メールアドレスを入力",
-                    password_label: "パスワード",
-                    password_input_placeholder: "パスワードを入力",
-                    button_label: "新規登録",
-                    link_text: "アカウントが必要ですか？",
-                  },
-                  update_password: {
-                    button_label: "パスワードを更新",
-                    password_label: "パスワード",
-                    password_input_placeholder: "新しいパスワードを入力",
-                  },
-                  forgotten_password: {
-                    button_label: "メールを送信する",
-                    email_input_placeholder: "登録していたメールアドレスを入力",
-                    email_label: "登録済みのメールアドレス",
-                    link_text: "パスワードをお忘れですか？",
-                  },
-                },
-              }}
-              providers={["google", "github"]}
-            />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      {!session ? (
+        <>
+          <Button onClick={onOpen} width={"100%"} size={"lg"}>
+            ログイン
+          </Button>
+          <LoginModal isOpen={isOpen} onClose={onClose} />
+        </>
+      ) : (
+        <>
+          <Card
+            width={"100%"}
+            borderRadius={"16"}
+            shadow={"none"}
+            background={"gray.100"}
+          >
+            <CardBody>
+              <HStack spacing={4}>
+                <Avatar
+                  src={avatarImageUrl ?? undefined}
+                  name={userName ?? undefined}
+                />
+                <Stack spacing={1}>
+                  <Tooltip
+                    label={uid ?? "undefined"}
+                    fontSize={"xs"}
+                    hasArrow
+                    arrowSize={10}
+                    placement={"top"}
+                  >
+                    <Heading size={"md"}>{userName}</Heading>
+                  </Tooltip>
+                  <Text fontSize={"xs"}>ログイン済み</Text>
+                </Stack>
+                <Spacer />
+                <Button
+                  variant={"outline"}
+                  onClick={() => supabase.auth.signOut()}
+                  background={"whiteAlpha.600"}
+                >
+                  ログアウト
+                </Button>
+              </HStack>
+            </CardBody>
+          </Card>
+        </>
+      )}
     </>
   )
 }) as DivComponent
