@@ -1,4 +1,5 @@
 import { Vector3 } from "@babylonjs/core"
+import { SceneMeshData } from "photon-babylon"
 import create from "zustand"
 
 type State = {
@@ -10,6 +11,7 @@ type State = {
   remoteSceneId?: string
   ownerId?: string
   cloudFilePath?: string
+  meshList: SceneMeshData
 }
 
 type Actions = {
@@ -17,6 +19,7 @@ type Actions = {
   setPoint: (current: Vector3) => void
   setPointWindow: (current: { x: number; y: number }) => void
   setPointerMeshUid: (uid: number) => void
+  setMeshList: (meshList: SceneMeshData) => void
 
   // other
   reset: () => void
@@ -35,6 +38,7 @@ const initialState: State = {
   },
   sceneName: "untitled",
   cloudFileExists: false,
+  meshList: {},
 }
 
 export const useEditorStore = create<State & Actions>((set) => ({
@@ -46,4 +50,5 @@ export const useEditorStore = create<State & Actions>((set) => ({
   setRemoteData: (args) => {
     set({ ...args, cloudFileExists: true })
   },
+  setMeshList: (meshList) => set({ meshList }),
 }))
