@@ -1,17 +1,9 @@
-import {
-  Box,
-  Button,
-  Card,
-  Center,
-  Container,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react"
+import { Container, VStack } from "@chakra-ui/react"
 import type { NextPage } from "next"
 import Head from "next/head"
-import Image from "next/image"
-import Link from "next/link"
+import AuthButton from "../features/home/components/AuthButton"
+import EntryEditorButton from "../features/home/components/EntryEditorButton"
+import Title from "../features/home/components/Title"
 import styles from "../styles/Home.module.css"
 
 const Home: NextPage = () => {
@@ -25,33 +17,10 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <Container>
-          <Center>
-            <Box>
-              <Heading>PHOTON</Heading>
-              <Text fontSize={"large"}>3D FILE EDITOR</Text>
-            </Box>
-          </Center>
+          <Title />
           <VStack mt={16} gap={6}>
-            <Card
-              textColor={"white"}
-              minW={300}
-              background="cyan.500"
-              p={16}
-              borderRadius={16}
-              shadow={0}
-            >
-              <Center>
-                <Text fontSize={"5xl"} fontWeight={"bold"}>
-                  エディタを開く
-                </Text>
-              </Center>
-              <Text mt={"2rem"}>
-                3Dファイルの閲覧・簡易編集・注釈の追加ができるエディタを開きます
-              </Text>
-            </Card>
-            <Button width={"100%"} size={"lg"}>
-              ログイン
-            </Button>
+            <EntryEditorButton />
+            <AuthButton />
           </VStack>
         </Container>
       </main>
