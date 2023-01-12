@@ -15,7 +15,7 @@ const Auth = () => {
       alert("マジックリンクを送付しました！メールボックスを確認してください！")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      alert(error.err_description || error.message)
+      // alert(error.err_description || error.message)
     } finally {
       setLoading(false)
     }

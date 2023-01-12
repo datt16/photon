@@ -7,7 +7,9 @@ const Title = (() => {
     <Center>
       <Box>
         <Heading>PHOTON</Heading>
-        <Text fontSize={"large"}>3D FILE EDITOR</Text>
+        <Text fontSize={"large"} letterSpacing={"wider"} textAlign={"center"}>
+          3D FILE EDITOR
+        </Text>
       </Box>
     </Center>
   )

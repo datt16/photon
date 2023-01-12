@@ -3,7 +3,6 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react"
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react"
 import type { AppProps } from "next/app"
-import { RecoilRoot } from "recoil"
 import Head from "next/head"
 import { useState } from "react"
 import { Database } from "../types/db/schema"
@@ -46,16 +45,14 @@ function MyApp({
       <Head>
         <title>Project Photon</title>
       </Head>
-      <RecoilRoot>
-        <SessionContextProvider
-          supabaseClient={supabaseClient}
-          initialSession={pageProps.initialSession}
-        >
-          <ChakraProvider theme={theme}>
-            <Component {...pageProps} />
-          </ChakraProvider>
-        </SessionContextProvider>
-      </RecoilRoot>
+      <SessionContextProvider
+        supabaseClient={supabaseClient}
+        initialSession={pageProps.initialSession}
+      >
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </SessionContextProvider>
     </div>
   )
 }
